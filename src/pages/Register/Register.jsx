@@ -1,36 +1,48 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { UserPlus } from '@phosphor-icons/react';
 import { useAuth } from '../../context/AuthContext';
 import GlowButton from '../../components/GlowButton/GlowButton';
 import styles from './Register.module.css';
 
 export default function Register() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { register } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    setError(null); // Limpiar error al cambiar
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert('Las contraseñas no coinciden');
-      return;
+    setLoading(true);
+    setError(null);
+
+    try {
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error('Las contraseñas no coinciden');
+      }
+
+      await register(formData.email, formData.password, formData.name);
+      // Navigation will be handled by AppContent
+    } catch (err) {
+      setError(err.message || 'Error al registrarse');
+    } finally {
+      setLoading(false);
     }
-    // Simulate register and login
-    login({ email: formData.email, name: formData.name });
-    // Navigation will be handled by AppContent
   };
 
   return (
@@ -41,14 +53,15 @@ export default function Register() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <motion.h1
-          className={styles.title}
+        <motion.div
+          className={styles.titleContainer}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          Registrarse
-        </motion.h1>
+          <h1 className={styles.title}>Registrarse</h1>
+          <UserPlus size={32} weight="bold" className={styles.registerIcon} />
+        </motion.div>
         <motion.form
           className={styles.form}
           onSubmit={handleSubmit}
@@ -104,8 +117,17 @@ export default function Register() {
               required
             />
           </div>
-          <GlowButton type="submit" variant="gold" fullWidth>
-            Registrarse
+          {error && (
+            <motion.div
+              className={styles.errorMessage}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              {error}
+            </motion.div>
+          )}
+          <GlowButton type="submit" variant="gold" fullWidth disabled={loading}>
+            {loading ? 'Cargando...' : 'Registrarse'}
           </GlowButton>
         </motion.form>
         <motion.p
@@ -119,6 +141,7 @@ export default function Register() {
             type="button"
             className={styles.link}
             onClick={() => navigate('/login')}
+            
           >
             Inicia Sesión
           </button>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { SignIn } from '@phosphor-icons/react';
 import { useAuth } from '../../context/AuthContext';
 import GlowButton from '../../components/GlowButton/GlowButton';
 import styles from './Login.module.css';
@@ -12,19 +13,30 @@ export default function Login() {
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    setError(null); // Limpiar error al cambiar
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate login
-    login({ email: formData.email, name: formData.email.split('@')[0] });
-    // Navigation will be handled by AppContent
+    setLoading(true);
+    setError(null);
+
+    try {
+      await login(formData.email, formData.password);
+      // Navigation will be handled by AppContent
+    } catch (err) {
+      setError(err.message || 'Error al iniciar sesión');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,14 +47,15 @@ export default function Login() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <motion.h1
-          className={styles.title}
+        <motion.div
+          className={styles.titleContainer}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          Iniciar Sesión
-        </motion.h1>
+          <h1 className={styles.title}>Iniciar Sesión</h1>
+          <SignIn size={32} weight="bold" className={styles.loginIcon} />
+        </motion.div>
         <motion.form
           className={styles.form}
           onSubmit={handleSubmit}
@@ -74,8 +87,17 @@ export default function Login() {
               required
             />
           </div>
-          <GlowButton type="submit" variant="gold" fullWidth>
-            Iniciar Sesión
+          {error && (
+            <motion.div
+              className={styles.errorMessage}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              {error}
+            </motion.div>
+          )}
+          <GlowButton type="submit" variant="gold" fullWidth disabled={loading}>
+            {loading ? 'Cargando...' : 'Iniciar Sesión'}
           </GlowButton>
         </motion.form>
         <motion.p

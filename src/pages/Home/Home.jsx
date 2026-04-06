@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lightning, TrendUp, Fire, Trophy, Gift, Eye, EyeSlash, ArrowRight, Target } from '@phosphor-icons/react';
+import { Lightning, TrendUp, Fire, Trophy, Gift, Eye, EyeSlash, ArrowRight, Target, Coin, Crown, Star, Handshake, Check, X } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
+import Confetti from 'react-confetti';
+import SplashScreen from '../../components/SplashScreen/SplashScreen';
 import MatchCard from '../../components/MatchCard/MatchCard';
 import StarsBackground from '../../components/StarsBackground/StarsBackground';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
@@ -14,11 +16,11 @@ import styles from './Home.module.css';
 // Staggered children animation
 const staggerContainer = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
+  show: { transition: { staggerChildren: 0.12 } },
 };
 const staggerItem = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } },
+  show: { opacity: 1, y: [20, -5, 0], transition: { type: 'spring', stiffness: 300, damping: 24 } },
 };
 
 export default function Home() {
@@ -50,9 +52,15 @@ export default function Home() {
             <span className={styles.balanceLabel}>Mis Puntos AI Banks</span>
             <motion.button
               className={styles.eyeBtn}
-              onClick={() => setShowBalance(!showBalance)}
+              onClick={() => {
+                setShowBalance(!showBalance);
+                setPopEye(true);
+                setTimeout(() => setPopEye(false), 200);
+              }}
               aria-label="Mostrar/ocultar saldo"
               whileTap={{ scale: 0.85 }}
+              animate={{ scale: popEye ? 1.2 : 1 }}
+              transition={{ duration: 0.2 }}
             >
               <AnimatePresence mode="wait">
                 <motion.span
@@ -75,7 +83,7 @@ export default function Home() {
                 animate={{ rotate: [0, 15, -15, 0] }}
                 transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
               >
-                🪙
+                <Coin size={20} weight="bold" />
               </motion.span>
               <AnimatePresence mode="wait">
                 {showBalance ? (
@@ -120,10 +128,19 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <span>👑</span>
+            <Crown size={16} weight="bold" />
             <span>{USER_PROFILE.tier}</span>
             <span className={styles.badgeDot}>•</span>
-            <span>Racha {USER_PROFILE.streak} 🔥</span>
+            <span>Racha {USER_PROFILE.streak}</span>
+            {USER_PROFILE.streak > 5 && (
+              <motion.span
+                animate={{ scale: [1, 1.2, 1], opacity: [1, 0.8, 1] }}
+                transition={{ repeat: Infinity, duration: 1.5 }}
+                style={{ display: 'inline-block', marginLeft: '4px' }}
+              >
+                <Fire size={16} weight="bold" />
+              </motion.span>
+            )}
           </motion.div>
         </div>
       </motion.section>
@@ -176,17 +193,18 @@ export default function Home() {
             }}
             transition={{ repeat: Infinity, duration: 2.5 }}
           >
-            🎰
+            <Gift size={24} weight="bold" />
           </motion.span>
           <div>
             <div className={styles.bonusLabel}>BONO DIARIO</div>
             <div className={styles.bonusValue}>+50 puntos gratis</div>
           </div>
         </div>
-        <RippleButton variant="green" size="sm" onClick={() => {}}>
-          Reclamar
+        <RippleButton variant="green" size="sm" onClick={() => setClaimedBonus(true)} disabled={claimedBonus}>
+          {claimedBonus ? 'Reclamado' : 'Reclamar'}
         </RippleButton>
       </motion.section>
+      {claimedBonus && <Confetti recycle={false} numberOfPieces={200} />}
 
       {/* ═══ FIFA World Cup 2026 — Live Section ═══ */}
       <FifaLive />
@@ -216,6 +234,7 @@ export default function Home() {
               className={styles.actItem}
               variants={staggerItem}
               whileTap={{ scale: 0.98, backgroundColor: 'rgba(255,255,255,0.03)' }}
+              whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,215,0,0.05)' }}
             >
               <div className={styles.actLeft}>
                 <motion.div
@@ -230,7 +249,7 @@ export default function Home() {
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.4 + i * 0.1, type: 'spring', stiffness: 400 }}
                 >
-                  {act.result === 'win' ? '✓' : '✕'}
+                  {act.result === 'win' ? <Check size={16} weight="bold" /> : <X size={16} weight="bold" />}
                 </motion.div>
                 <div>
                   <div className={styles.actMatch}>{act.match}</div>
@@ -295,21 +314,21 @@ export default function Home() {
             {
               title: 'Doble Puntos',
               desc: 'Duplica tus puntos en partidos de Ecuador',
-              icon: '✨',
+              icon: Star,
               gradient: 'linear-gradient(135deg, #1a1a2e, #2d1b69)',
               border: 'rgba(213, 0, 249, 0.2)',
             },
             {
               title: 'Refiere y Gana',
               desc: 'Invita amigos y gana 500 puntos cada uno',
-              icon: '🤝',
+              icon: Handshake,
               gradient: 'linear-gradient(135deg, #1a1a2e, #1b3a2d)',
               border: 'rgba(0, 230, 118, 0.2)',
             },
             {
-              title: '⚽ Mundial 2026',
+              title: 'Mundial 2026',
               desc: 'Predice el campeón y gana 10,000 pts',
-              icon: '🏆',
+              icon: Trophy,
               gradient: 'linear-gradient(135deg, #1a1a2e, #3a2d1b)',
               border: 'rgba(255, 215, 0, 0.2)',
             },
@@ -320,16 +339,16 @@ export default function Home() {
               style={{ background: promo.gradient, borderColor: promo.border }}
               variants={staggerItem}
               whileTap={{ scale: 0.96 }}
-              whileHover={{ y: -4, boxShadow: `0 8px 30px ${promo.border}` }}
+              whileHover={{ y: -4, boxShadow: `0 8px 30px ${promo.border}`, filter: 'brightness(1.1)' }}
             >
               <h4 className={styles.promoTitle}>{promo.title}</h4>
               <p className={styles.promoDesc}>{promo.desc}</p>
               <motion.div
                 className={styles.promoIconWrap}
-                animate={{ y: [0, -3, 0], rotate: [0, 5, -5, 0] }}
+                animate={{ y: [0, -3, 0], rotate: [0, 2, -2, 0] }}
                 transition={{ repeat: Infinity, duration: 3, delay: i * 0.5 }}
               >
-                <span className={styles.promoIcon}>{promo.icon}</span>
+                <promo.icon size={24} weight="bold" />
               </motion.div>
             </motion.div>
           ))}

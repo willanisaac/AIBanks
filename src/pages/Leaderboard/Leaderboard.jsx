@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Crown, Fire, Trophy } from '@phosphor-icons/react';
 import { LEADERBOARD_DATA, USER_PROFILE } from '../../data/mockData';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
 import StarsBackground from '../../components/StarsBackground/StarsBackground';
@@ -26,7 +27,7 @@ export default function Leaderboard() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h2 className={styles.title}>🏆 Ranking</h2>
+        <h2 className={styles.title}><Trophy size={24} /> Ranking</h2>
         <p className={styles.subtitle}>Compite con otros jugadores</p>
       </motion.div>
 
@@ -94,7 +95,7 @@ export default function Leaderboard() {
               animate={{ y: [0, -5, 0], rotate: [0, 3, -3, 0] }}
               transition={{ repeat: Infinity, duration: 2.5 }}
             >
-              👑
+              <Crown size={32} />
             </motion.div>
             <motion.div
               className={`${styles.podiumAvatar} ${styles.podiumAvatarFirst}`}
@@ -104,7 +105,7 @@ export default function Leaderboard() {
             >
               <span>{LEADERBOARD_DATA[0].avatar}</span>
             </motion.div>
-            <span className={styles.podiumBadge}>🏆</span>
+            <span className={styles.podiumBadge}><Trophy size={16} /></span>
             <span className={styles.podiumName}>{LEADERBOARD_DATA[0].name}</span>
             <span className={styles.podiumPoints}>
               <AnimatedCounter value={LEADERBOARD_DATA[0].points.toLocaleString()} />
@@ -167,7 +168,7 @@ export default function Leaderboard() {
           <span className={styles.yourAvatar}>{USER_PROFILE.avatar}</span>
           <div>
             <div className={styles.yourName}>Tú ({USER_PROFILE.name})</div>
-            <div className={styles.yourTier}>🔥 Racha: {USER_PROFILE.streak}</div>
+            <div className={styles.yourTier}><Fire size={16} /> Racha: {USER_PROFILE.streak}</div>
           </div>
         </div>
         <div className={styles.yourPoints}>
@@ -200,7 +201,7 @@ export default function Leaderboard() {
               </motion.span>
               <div>
                 <div className={styles.listName}>{player.name}</div>
-                <div className={styles.listStreak}>🔥 {player.streak}</div>
+                <div className={styles.listStreak}><Fire size={14} /> {player.streak}</div>
               </div>
             </div>
             <div className={styles.listRight}>

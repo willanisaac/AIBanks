@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Crown, Coin, Check, Gift, Star, CurrencyDollar, TShirt, FilmSlate, Buildings } from '@phosphor-icons/react';
 import FlipCard from '../../components/FlipCard/FlipCard';
 import RippleButton from '../../components/RippleButton/RippleButton';
 import FireworksBackground from '../../components/FireworksBackground/FireworksBackground';
@@ -10,11 +11,11 @@ import { REWARDS_CATALOG, USER_PROFILE } from '../../data/mockData';
 import styles from './Rewards.module.css';
 
 const CATEGORIES = [
-  { key: 'all', label: '🎁 Todos' },
-  { key: 'cashback', label: '💵 Cashback' },
-  { key: 'merchandise', label: '👕 Merch' },
-  { key: 'entertainment', label: '🎬 Entreteni.' },
-  { key: 'experiences', label: '🏟️ Experiencias' },
+  { key: 'all', icon: Gift, label: 'Todos' },
+  { key: 'cashback', icon: CurrencyDollar, label: 'Cashback' },
+  { key: 'merchandise', icon: TShirt, label: 'Merch' },
+  { key: 'entertainment', icon: FilmSlate, label: 'Entreteni.' },
+  { key: 'experiences', icon: Buildings, label: 'Experiencias' },
 ];
 
 const staggerContainer = {
@@ -88,7 +89,7 @@ export default function Rewards() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h2 className={styles.title}>🎁 Premios</h2>
+        <h2 className={styles.title}><Gift size={24} /> Premios</h2>
       </motion.div>
 
       {/* Recommended Section */}
@@ -98,7 +99,7 @@ export default function Rewards() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <h3 className={styles.sectionTitle}>⭐ Recomendados para ti</h3>
+        <h3 className={styles.sectionTitle}><Star size={18} /> Recomendados para ti</h3>
         <motion.div className={styles.recommendedGrid} variants={staggerContainer} initial="hidden" animate="show">
           {recommended.map((reward) => (
             <motion.div key={reward.id} variants={staggerItem}>
@@ -122,7 +123,7 @@ export default function Rewards() {
                       disabled={USER_PROFILE.points < reward.cost || redeemed[reward.id]}
                       className={redeemed[reward.id] ? styles.redeemedBtn : ''}
                     >
-                      {redeemed[reward.id] ? 'Canjeado ✓' : 'Canjear'}
+                      {redeemed[reward.id] ? <>Canjeado <Check size={14} /></> : 'Canjear'}
                     </RippleButton>
                   </div>
                 }
@@ -142,7 +143,7 @@ export default function Rewards() {
         <div className={styles.balanceInfo}>
           <span className={styles.balanceLabel}>Tu saldo disponible</span>
           <div className={styles.balanceValue}>
-            <span>🪙</span>
+            <Coin size={20} />
             <AnimatedCounter
               value={USER_PROFILE.points.toLocaleString()}
               className={styles.balanceNum}
@@ -156,7 +157,7 @@ export default function Rewards() {
           animate={{ boxShadow: ['0 0 0px rgba(255,215,0,0)', '0 0 12px rgba(255,215,0,0.3)', '0 0 0px rgba(255,215,0,0)'] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <span>👑</span>
+          <Crown size={16} />
           <span>{USER_PROFILE.tier}</span>
         </motion.div>
       </motion.div>
@@ -171,7 +172,7 @@ export default function Rewards() {
             whileTap={{ scale: 0.93 }}
             layout
           >
-            {cat.label}
+            <cat.icon size={16} /> {cat.label}
             {activeCategory === cat.key && (
               <motion.div
                 className={styles.catIndicator}
@@ -208,7 +209,7 @@ export default function Rewards() {
                           animate={{ scale: [1, 1.05, 1] }}
                           transition={{ duration: 2, repeat: Infinity }}
                         >
-                          ⭐ Popular
+                          <Star size={14} /> Popular
                         </motion.div>
                       )}
                       <motion.span
@@ -222,7 +223,7 @@ export default function Rewards() {
                       <p className={styles.rewardDesc}>{reward.description}</p>
                       <div className={styles.rewardFooter}>
                         <div className={styles.rewardCost}>
-                          <span>🪙</span>
+                          <Coin size={16} />
                           <span className={styles.costValue}>{reward.cost.toLocaleString()}</span>
                         </div>
                       </div>
@@ -244,7 +245,7 @@ export default function Rewards() {
                             disabled={!canAfford}
                             fullWidth
                           >
-                            {canAfford ? '🪙 Canjear Ahora' : 'Puntos Insuficientes'}
+                            {canAfford ? <><Coin size={14} /> Canjear Ahora</> : 'Puntos Insuficientes'}
                           </RippleButton>
                         )}
                       </div>

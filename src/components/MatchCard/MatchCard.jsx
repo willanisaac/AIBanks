@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Fire, Coin, Check } from '@phosphor-icons/react';
 import styles from './MatchCard.module.css';
 
 export default function MatchCard({ match, delay = 0, onPredict, prediction }) {
@@ -47,7 +48,7 @@ export default function MatchCard({ match, delay = 0, onPredict, prediction }) {
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
-              🔥 HOT
+              <Fire size={14} /> HOT
             </motion.span>
           )}
         </div>
@@ -144,7 +145,7 @@ export default function MatchCard({ match, delay = 0, onPredict, prediction }) {
           animate={{ scale: [1, 1.02, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          🪙 <span>{match.points} pts</span>
+          <Coin size={16} /> <span>{match.points} pts</span>
         </motion.div>
         <AnimatePresence>
           {selected && !confirmed && (
@@ -157,7 +158,7 @@ export default function MatchCard({ match, delay = 0, onPredict, prediction }) {
               whileTap={{ scale: 0.93 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             >
-              ✓ Confirmar
+              <Check size={16} /> Confirmar
             </motion.button>
           )}
           {confirmed && (

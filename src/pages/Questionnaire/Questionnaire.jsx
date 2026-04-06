@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { Trophy, Shield, Scales, DiceFive, Money, FilmSlate } from '@phosphor-icons/react';
 import { useAuth } from '../../context/AuthContext';
 import GlowButton from '../../components/GlowButton/GlowButton';
 import styles from './Questionnaire.module.css';
@@ -10,27 +11,27 @@ const questions = [
     id: 1,
     question: '¿Qué tipo de premios prefieres?',
     options: [
-      { text: 'Premios seguros y garantizados', value: 'conservador', icon: '🛡️' },
-      { text: 'Premios con buen equilibrio', value: 'moderado', icon: '⚖️' },
-      { text: 'Premios emocionantes y de alto valor', value: 'arriesgado', icon: '🎰' },
+      { text: 'Premios seguros y garantizados', value: 'conservador', icon: Shield },
+      { text: 'Premios con buen equilibrio', value: 'moderado', icon: Scales },
+      { text: 'Premios emocionantes y de alto valor', value: 'arriesgado', icon: DiceFive },
     ],
   },
   {
     id: 2,
     question: '¿Cómo te sientes con los sorteos?',
     options: [
-      { text: 'Prefiero evitarlos, quiero certeza', value: 'conservador', icon: '❌' },
-      { text: 'Me gusta participar en algunos', value: 'moderado', icon: '🤔' },
-      { text: '¡Me encantan los sorteos grandes!', value: 'arriesgado', icon: '🎉' },
+      { text: 'Prefiero evitarlos, quiero certeza', value: 'conservador', icon: Shield },
+      { text: 'Me gusta participar en algunos', value: 'moderado', icon: Scales },
+      { text: '¡Me encantan los sorteos grandes!', value: 'arriesgado', icon: Trophy },
     ],
   },
   {
     id: 3,
     question: '¿Qué valoras más en un premio?',
     options: [
-      { text: 'Estabilidad y utilidad diaria', value: 'conservador', icon: '💰' },
-      { text: 'Diversión y entretenimiento', value: 'moderado', icon: '🎬' },
-      { text: 'Experiencias únicas y emocionantes', value: 'arriesgado', icon: '🏆' },
+      { text: 'Estabilidad y utilidad diaria', value: 'conservador', icon: Money },
+      { text: 'Diversión y entretenimiento', value: 'moderado', icon: FilmSlate },
+      { text: 'Experiencias únicas y emocionantes', value: 'arriesgado', icon: Trophy },
     ],
   },
 ];
@@ -115,7 +116,7 @@ export default function Questionnaire() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <span className={styles.optionIcon}>{option.icon}</span>
+                  <span className={styles.optionIcon}><option.icon size={24} /></span>
                   <span className={styles.optionText}>{option.text}</span>
                 </motion.button>
               ))}

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   SignOut,
   Gear,
@@ -7,6 +8,9 @@ import {
   Info,
   CaretRight,
   Sun,
+  Crown,
+  Fire,
+  Coin,
 } from '@phosphor-icons/react';
 import FlipCard from '../../components/FlipCard/FlipCard';
 import StarsBackground from '../../components/StarsBackground/StarsBackground';
@@ -26,6 +30,7 @@ const staggerItem = {
 };
 
 export default function Profile() {
+  const navigate = useNavigate();
   const { logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [predictions, setPredictions] = useState({});
@@ -37,6 +42,11 @@ export default function Profile() {
       setPredictions(JSON.parse(stored));
     }
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const predictionHistory = Object.entries(predictions).map(([matchId, choice]) => {
     const match = UPCOMING_MATCHES.find(m => m.id === parseInt(matchId));
@@ -78,7 +88,7 @@ export default function Profile() {
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
             >
-              👑
+              <Crown size={20} weight="bold" />
             </motion.span>
           </motion.div>
           <div className={styles.profileInfo}>
@@ -92,7 +102,7 @@ export default function Profile() {
             </motion.span>
           </div>
           <div className={styles.pointsBig}>
-            <span>🪙</span>
+            <Coin size={24} weight="bold" />
             <AnimatedCounter
               value={USER_PROFILE.points.toLocaleString()}
               className={styles.pointsNum}
@@ -173,7 +183,7 @@ export default function Profile() {
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
-              {USER_PROFILE.streak} 🔥
+              {USER_PROFILE.streak} <Fire size={20} weight="bold" />
             </motion.span>
             <span className={styles.statBoxLabel}>Racha</span>
           </div>
@@ -338,7 +348,7 @@ export default function Profile() {
               icon: <SignOut size={20} weight="bold" />,
               label: 'Cerrar Sesión',
               danger: true,
-              action: logout,
+              action: handleLogout,
             },
           ].map((item, i) => (
             <motion.button
