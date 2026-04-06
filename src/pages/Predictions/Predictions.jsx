@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MatchCard from '../../components/MatchCard/MatchCard';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
@@ -17,21 +17,38 @@ const staggerItem = {
 export default function Predictions() {
   const { matches, loading, error } = useWorldCupMatches();
   const [activeGroup, setActiveGroup] = useState('Todos');
-  const [predictions, setPredictions] = useState({});
+  
+  // Persistencia local para los pronósticos
+  const [predictions, setPredictions] = useState(() => {
+    const saved = localStorage.getItem('aibanks_preds');
+    return saved ? JSON.parse(saved) : {};
+  });
 
-  // Calcular grupos disponibles dinámicamente a partir de los partidos
-  const dynamicGroups = ['Todos', ...new Set(matches.map(m => m.group).filter(Boolean))].sort();
+  useEffect(() => {
+    localStorage.setItem('aibanks_preds', JSON.stringify(predictions));
+  }, [predictions]);
+
+  // Clasificamos partidos según estado de predicción
+  const predictedMatches = matches.filter(m => predictions[m.id]);
+  const pendingMatches = matches.filter(m => !predictions[m.id]);
+
+  // Calcular grupos disponibles solo de los pendientes, y agregar tab Pronosticados
+  const dynamicGroups = ['Todos', ...new Set(pendingMatches.map(m => m.group).filter(Boolean))].sort();
+  dynamicGroups.push('Pronosticados');
 
   const filtered =
-    activeGroup === 'Todos'
-      ? matches
-      : matches.filter((m) => m.group === activeGroup);
+    activeGroup === 'Pronosticados' 
+      ? predictedMatches 
+      : activeGroup === 'Todos'
+        ? pendingMatches
+        : pendingMatches.filter((m) => m.group === activeGroup);
 
   const handlePredict = (matchId, choice) => {
     setPredictions((prev) => ({ ...prev, [matchId]: choice }));
   };
 
-  const totalPts = filtered.reduce((acc, m) => acc + m.points, 0);
+  // Puntos apostados asegurados
+  const ptsEnJuego = predictedMatches.reduce((acc, m) => acc + m.points, 0);
 
   return (
     <div className={styles.page}>
@@ -54,7 +71,7 @@ export default function Predictions() {
             whileTap={{ scale: 0.93 }}
             style={{ position: 'relative' }}
           >
-            {g === 'Todos' ? '🌎 Todos' : (g.length === 1 ? `Grupo ${g}` : g)}
+            {g === 'Todos' ? '🌎 Todos' : g === 'Pronosticados' ? '✅ Pronosticados' : (g.length === 1 ? `Grupo ${g}` : g)}
             {activeGroup === g && (
               <motion.div
                 className={styles.filterIndicator}
@@ -89,23 +106,23 @@ export default function Predictions() {
         <div className={styles.stat}>
           <motion.span
             className={styles.statValue}
-            key={Object.keys(predictions).length}
+            key={predictedMatches.length}
             initial={{ scale: 1.3 }}
             animate={{ scale: 1 }}
           >
-            {Object.keys(predictions).length}
+            {predictedMatches.length}
           </motion.span>
           <span className={styles.statLabel}>Predicciones</span>
         </div>
         <div className={styles.statDivider} />
         <div className={styles.stat}>
-          <AnimatedCounter value={filtered.length} className={styles.statValue} />
-          <span className={styles.statLabel}>Partidos</span>
+          <AnimatedCounter value={pendingMatches.length} className={styles.statValue} />
+          <span className={styles.statLabel}>Restantes</span>
         </div>
         <div className={styles.statDivider} />
         <div className={styles.stat}>
-          <AnimatedCounter value={totalPts.toLocaleString()} className={styles.statValueGold} />
-          <span className={styles.statLabel}>Pts Posibles</span>
+          <AnimatedCounter value={ptsEnJuego} className={styles.statValueGold} />
+          <span className={styles.statLabel}>Pts en Juego</span>
         </div>
       </motion.div>
 
@@ -124,6 +141,7 @@ export default function Predictions() {
               <MatchCard
                 match={match}
                 onPredict={handlePredict}
+                predictedChoice={predictions[match.id]}
               />
             </motion.div>
           ))}

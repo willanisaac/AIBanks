@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './MatchCard.module.css';
 
-export default function MatchCard({ match, delay = 0, onPredict }) {
-  const [selected, setSelected] = useState(null);
-  const [confirmed, setConfirmed] = useState(false);
+export default function MatchCard({ match, delay = 0, onPredict, predictedChoice }) {
+  const [selected, setSelected] = useState(predictedChoice || null);
+  const [confirmed, setConfirmed] = useState(!!predictedChoice);
 
   const handleSelect = (choice) => {
     if (confirmed) return;
