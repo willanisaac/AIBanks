@@ -1,15 +1,19 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import {
   SignOut,
   Gear,
   ShieldCheck,
   Info,
   CaretRight,
+  Sun,
 } from '@phosphor-icons/react';
 import FlipCard from '../../components/FlipCard/FlipCard';
 import StarsBackground from '../../components/StarsBackground/StarsBackground';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
-import { USER_PROFILE } from '../../data/mockData';
+import { USER_PROFILE, UPCOMING_MATCHES } from '../../data/mockData';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import styles from './Profile.module.css';
 
 const staggerContainer = {
@@ -22,6 +26,23 @@ const staggerItem = {
 };
 
 export default function Profile() {
+  const { logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const [predictions, setPredictions] = useState({});
+  const archetype = localStorage.getItem('archetype') || 'moderado';
+
+  useEffect(() => {
+    const stored = localStorage.getItem('predictions');
+    if (stored) {
+      setPredictions(JSON.parse(stored));
+    }
+  }, []);
+
+  const predictionHistory = Object.entries(predictions).map(([matchId, choice]) => {
+    const match = UPCOMING_MATCHES.find(m => m.id === parseInt(matchId));
+    return match ? { ...match, prediction: choice } : null;
+  }).filter(Boolean);
+
   const accuracy = USER_PROFILE.winRate;
   const circumference = 2 * Math.PI * 42;
   const offset = circumference - (accuracy / 100) * circumference;
@@ -97,7 +118,7 @@ export default function Profile() {
                   <svg viewBox="0 0 100 100" className={styles.ring}>
                     <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="6" />
                     <motion.circle
-                      cx="50" cy="50" r="42" fill="none" stroke="#ffd700" strokeWidth="6" strokeLinecap="round"
+                      cx="50" cy="50" r="42" fill="none" stroke={theme === 'dark' ? '#ffd700' : '#b8960c'} strokeWidth="6" strokeLinecap="round"
                       strokeDasharray={circumference}
                       initial={{ strokeDashoffset: circumference }}
                       animate={{ strokeDashoffset: offset }}
@@ -115,7 +136,7 @@ export default function Profile() {
               <div className={`${styles.statCard} ${styles.statCardBack}`}>
                 <span className={styles.statBigNum}>✅ {USER_PROFILE.correctPredictions}</span>
                 <span className={styles.statBoxLabel}>Aciertos de {USER_PROFILE.totalPredictions}</span>
-                <span className={styles.statBigNum} style={{ color: '#ff1744' }}>❌ {USER_PROFILE.totalPredictions - USER_PROFILE.correctPredictions}</span>
+                <span className={styles.statBigNum} style={{ color: theme === 'dark' ? '#ff1744' : '#dc3545' }}>❌ {USER_PROFILE.totalPredictions - USER_PROFILE.correctPredictions}</span>
                 <span className={styles.statBoxLabel}>Errores</span>
               </div>
             }
@@ -208,7 +229,7 @@ export default function Profile() {
                 <motion.span
                   className={styles.actDot}
                   style={{
-                    background: act.result === 'win' ? '#00e676' : '#ff1744',
+                    background: act.result === 'win' ? (theme === 'dark' ? '#00e676' : '#28a745') : (theme === 'dark' ? '#ff1744' : '#dc3545'),
                   }}
                   animate={{
                     boxShadow: act.result === 'win'
@@ -224,12 +245,74 @@ export default function Profile() {
               </div>
               <span
                 className={styles.actPoints}
-                style={{ color: act.result === 'win' ? '#00e676' : '#ff1744' }}
+                style={{ color: act.result === 'win' ? (theme === 'dark' ? '#00e676' : '#28a745') : (theme === 'dark' ? '#ff1744' : '#dc3545') }}
               >
                 {act.points}
               </span>
             </motion.div>
           ))}
+        </motion.div>
+      </section>
+
+      {/* Archetype Section */}
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>🎯 Tu Arquetipo</h3>
+        <motion.div
+          className={styles.archetypeCard}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className={styles.archetypeContent}>
+            <span className={styles.archetypeIcon}>
+              {archetype === 'conservador' ? '🛡️' : archetype === 'moderado' ? '⚖️' : '🎰'}
+            </span>
+            <div>
+              <h4 className={styles.archetypeName}>
+                {archetype === 'conservador' ? 'Conservador' : archetype === 'moderado' ? 'Moderado' : 'Arriesgado'}
+              </h4>
+              <p className={styles.archetypeDesc}>
+                {archetype === 'conservador'
+                  ? 'Prefieres premios seguros y estables.'
+                  : archetype === 'moderado'
+                  ? 'Buscas un equilibrio entre riesgo y recompensa.'
+                  : 'Te gustan los premios emocionantes y de alto valor.'}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Prediction History */}
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>📋 Historial de Predicciones</h3>
+        <motion.div
+          className={styles.historyList}
+          variants={staggerContainer}
+          initial="hidden"
+          animate="show"
+        >
+          {predictionHistory.length > 0 ? (
+            predictionHistory.map((pred) => (
+              <motion.div
+                key={pred.id}
+                className={styles.historyItem}
+                variants={staggerItem}
+              >
+                <div className={styles.historyMatch}>
+                  <span className={styles.historyFlag}>{pred.home.flag}</span>
+                  <span>{pred.home.name} vs {pred.away.name}</span>
+                  <span className={styles.historyFlag}>{pred.away.flag}</span>
+                </div>
+                <div className={styles.historyPred}>
+                  Tu predicción: <strong>{pred.prediction === 'home' ? pred.home.name : pred.prediction === 'away' ? pred.away.name : 'Empate'}</strong>
+                </div>
+                <div className={styles.historyPoints}>+{pred.points} pts</div>
+              </motion.div>
+            ))
+          ) : (
+            <p className={styles.noHistory}>Aún no has hecho predicciones.</p>
+          )}
         </motion.div>
       </section>
 
@@ -242,6 +325,12 @@ export default function Profile() {
           animate="show"
         >
           {[
+            {
+              icon: <Sun size={20} weight="bold" />,
+              label: 'Tema de la app',
+              value: theme === 'dark' ? 'Oscuro' : 'Claro',
+              action: toggleTheme,
+            },
             { icon: <Gear size={20} weight="bold" />, label: 'Configuración' },
             { icon: <ShieldCheck size={20} weight="bold" />, label: 'Seguridad' },
             { icon: <Info size={20} weight="bold" />, label: 'Acerca de' },
@@ -249,6 +338,7 @@ export default function Profile() {
               icon: <SignOut size={20} weight="bold" />,
               label: 'Cerrar Sesión',
               danger: true,
+              action: logout,
             },
           ].map((item, i) => (
             <motion.button
@@ -256,10 +346,14 @@ export default function Profile() {
               className={`${styles.menuItem} ${item.danger ? styles.menuDanger : ''}`}
               variants={staggerItem}
               whileTap={{ scale: 0.98, x: 4 }}
+              onClick={item.action}
             >
               <div className={styles.menuItemLeft}>
                 <span className={styles.menuIcon}>{item.icon}</span>
-                <span>{item.label}</span>
+                <div className={styles.menuLabelGroup}>
+                  <span>{item.label}</span>
+                  {item.value && <span className={styles.menuItemValue}>{item.value}</span>}
+                </div>
               </div>
               <motion.span
                 animate={{ x: [0, 3, 0] }}

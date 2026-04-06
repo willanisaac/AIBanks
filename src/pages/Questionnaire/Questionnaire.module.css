@@ -1,0 +1,93 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary), var(--bg-surface));
+}
+
+.container {
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-surface));
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-xl);
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.progressBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold-primary), var(--gold-light));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  margin-bottom: 30px;
+  font-size: 1rem;
+}
+
+.question {
+  text-align: center;
+}
+
+.questionText {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin-bottom: 30px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.optionButton {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: var(--bg-surface);
+  border: 2px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.optionButton:hover {
+  border-color: var(--gold-primary);
+  background: rgba(255, 215, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.optionIcon {
+  font-size: 1.5rem;
+}
+
+.optionText {
+  flex: 1;
+  font-weight: 500;
+}

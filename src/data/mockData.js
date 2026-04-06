@@ -106,6 +106,7 @@ export const REWARDS_CATALOG = [
     icon: '💵',
     category: 'cashback',
     popular: true,
+    archetype: 'conservador',
   },
   {
     id: 2,
@@ -115,6 +116,7 @@ export const REWARDS_CATALOG = [
     icon: '👕',
     category: 'merchandise',
     popular: true,
+    archetype: 'moderado',
   },
   {
     id: 3,
@@ -124,6 +126,7 @@ export const REWARDS_CATALOG = [
     icon: '🎬',
     category: 'entertainment',
     popular: false,
+    archetype: 'moderado',
   },
   {
     id: 4,
@@ -133,6 +136,7 @@ export const REWARDS_CATALOG = [
     icon: '⚽',
     category: 'merchandise',
     popular: true,
+    archetype: 'arriesgado',
   },
   {
     id: 5,
@@ -142,6 +146,7 @@ export const REWARDS_CATALOG = [
     icon: '🎵',
     category: 'entertainment',
     popular: false,
+    archetype: 'moderado',
   },
   {
     id: 6,
@@ -151,6 +156,7 @@ export const REWARDS_CATALOG = [
     icon: '💰',
     category: 'cashback',
     popular: true,
+    archetype: 'conservador',
   },
   {
     id: 7,
@@ -160,6 +166,7 @@ export const REWARDS_CATALOG = [
     icon: '🏟️',
     category: 'experiences',
     popular: true,
+    archetype: 'arriesgado',
   },
   {
     id: 8,
@@ -169,6 +176,7 @@ export const REWARDS_CATALOG = [
     icon: '🎮',
     category: 'entertainment',
     popular: false,
+    archetype: 'arriesgado',
   },
 ];
 

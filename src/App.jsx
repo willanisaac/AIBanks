@@ -1,17 +1,57 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { NavigationProvider } from './context/NavigationContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import TopBar from './components/TopBar/TopBar';
 import BottomNav from './components/BottomNav/BottomNav';
 import PageTransition from './components/PageTransition/PageTransition';
+import SplashScreen from './components/SplashScreen/SplashScreen';
 import Home from './pages/Home/Home';
 import Predictions from './pages/Predictions/Predictions';
 import Rewards from './pages/Rewards/Rewards';
 import Leaderboard from './pages/Leaderboard/Leaderboard';
 import Profile from './pages/Profile/Profile';
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
+import Questionnaire from './pages/Questionnaire/Questionnaire';
 
-export default function App() {
+function AppContent() {
+  const { user, hasCompletedOnboarding } = useAuth();
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
+
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<Login />} />
+      </Routes>
+    );
+  }
+
+  if (!hasCompletedOnboarding) {
+    return <Questionnaire />;
+  }
+
   return (
-    <BrowserRouter>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <NavigationProvider>
         <TopBar />
         <main style={{ paddingTop: 0 }}>
@@ -27,6 +67,20 @@ export default function App() {
         </main>
         <BottomNav />
       </NavigationProvider>
+    </motion.div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ThemeProvider>
+        <AuthProvider>
+          <AnimatePresence mode="wait">
+            <AppContent />
+          </AnimatePresence>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

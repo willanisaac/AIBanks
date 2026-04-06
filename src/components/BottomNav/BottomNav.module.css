@@ -14,7 +14,7 @@
 .bg {
   position: absolute;
   inset: 0;
-  background: rgba(10, 10, 15, 0.95);
+  background: rgba(var(--bg-primary-rgb), 0.95);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-top: 1px solid var(--border-subtle);
@@ -42,12 +42,12 @@
   width: 52px;
   height: 52px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  background: var(--gold-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0a0a0f;
-  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3), 0 0 0 3px rgba(10, 10, 15, 0.95);
+  color: var(--bg-primary);
+  box-shadow: 0 4px 20px rgba(var(--gold-primary-rgba), 0.3), 0 0 0 3px rgba(var(--bg-primary-rgb), 0.95);
   position: relative;
 }
 

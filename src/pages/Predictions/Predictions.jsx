@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MatchCard from '../../components/MatchCard/MatchCard';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
@@ -19,8 +19,16 @@ export default function Predictions() {
   const [activeGroup, setActiveGroup] = useState('Todos');
   const [predictions, setPredictions] = useState({});
 
-  // Calcular grupos disponibles dinámicamente a partir de los partidos
-  const dynamicGroups = ['Todos', ...new Set(matches.map(m => m.group).filter(Boolean))].sort();
+  useEffect(() => {
+    const stored = localStorage.getItem('predictions');
+    if (stored) {
+      setPredictions(JSON.parse(stored));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('predictions', JSON.stringify(predictions));
+  }, [predictions]);
 
   const filtered =
     activeGroup === 'Todos'
@@ -124,6 +132,7 @@ export default function Predictions() {
               <MatchCard
                 match={match}
                 onPredict={handlePredict}
+                prediction={predictions[match.id]}
               />
             </motion.div>
           ))}

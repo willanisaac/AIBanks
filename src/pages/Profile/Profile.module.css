@@ -282,6 +282,15 @@
   align-items: center;
   gap: 12px;
 }
+.menuLabelGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.menuItemValue {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
 .menuDanger {
   color: var(--accent-red);
 }
@@ -293,6 +302,75 @@
 .menuChevron {
   color: var(--text-muted);
   opacity: 0.5;
+}
+
+/* Archetype Section */
+.archetypeCard {
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-surface));
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.archetypeContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.archetypeIcon {
+  font-size: 2.5rem;
+}
+.archetypeName {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.archetypeDesc {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Prediction History */
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.historyItem {
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-surface));
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.historyMatch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.historyFlag {
+  font-size: 1.2rem;
+}
+.historyPred {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.historyPoints {
+  align-self: flex-end;
+  font-weight: 700;
+  color: #ffd700;
+}
+.noHistory {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 20px;
+  font-style: italic;
 }
 
 /* Footer */

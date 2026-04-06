@@ -1,0 +1,129 @@
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import GlowButton from '../../components/GlowButton/GlowButton';
+import styles from './Register.module.css';
+
+export default function Register() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert('Las contraseñas no coinciden');
+      return;
+    }
+    // Simulate register and login
+    login({ email: formData.email, name: formData.name });
+    // Navigation will be handled by AppContent
+  };
+
+  return (
+    <div className={styles.page}>
+      <motion.div
+        className={styles.container}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <motion.h1
+          className={styles.title}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
+          Registrarse
+        </motion.h1>
+        <motion.form
+          className={styles.form}
+          onSubmit={handleSubmit}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          <div className={styles.inputGroup}>
+            <label htmlFor="name" className={styles.label}>Nombre Completo</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className={styles.input}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label htmlFor="email" className={styles.label}>Correo Electrónico</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={styles.input}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label htmlFor="password" className={styles.label}>Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className={styles.input}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label htmlFor="confirmPassword" className={styles.label}>Confirmar Contraseña</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className={styles.input}
+              required
+            />
+          </div>
+          <GlowButton type="submit" variant="gold" fullWidth>
+            Registrarse
+          </GlowButton>
+        </motion.form>
+        <motion.p
+          className={styles.loginLink}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          ¿Ya tienes cuenta?{' '}
+          <button
+            type="button"
+            className={styles.link}
+            onClick={() => navigate('/login')}
+          >
+            Inicia Sesión
+          </button>
+        </motion.p>
+      </motion.div>
+    </div>
+  );
+}

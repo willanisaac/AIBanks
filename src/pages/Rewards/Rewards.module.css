@@ -22,6 +22,22 @@
   font-weight: 800;
 }
 
+/* Recommended Section */
+.recommended {
+  margin-bottom: 24px;
+}
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+.recommendedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
 /* Balance */
 .balance {
   background: linear-gradient(145deg, var(--bg-card), var(--bg-surface));
