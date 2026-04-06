@@ -6,6 +6,7 @@ import MatchCard from '../../components/MatchCard/MatchCard';
 import StarsBackground from '../../components/StarsBackground/StarsBackground';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
 import RippleButton from '../../components/RippleButton/RippleButton';
+import FifaLive from '../../components/FifaLive/FifaLive';
 import { UPCOMING_MATCHES, USER_PROFILE } from '../../data/mockData';
 import styles from './Home.module.css';
 
@@ -183,6 +184,9 @@ export default function Home() {
           Reclamar
         </RippleButton>
       </motion.section>
+
+      {/* ═══ FIFA World Cup 2026 — Live Section ═══ */}
+      <FifaLive />
 
       {/* Mis Predicciones — staggered list */}
       <section className={styles.section}>
