@@ -26,9 +26,21 @@ const staggerItem = {
 export default function Home() {
   const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(true);
-  
-  const { matches, loading } = useWorldCupMatches();
-  const hotMatches = matches.filter((m) => m.hot).slice(0, 2);
+  const [showSplash, setShowSplash] = useState(true);
+  const [claimedBonus, setClaimedBonus] = useState(false);
+  const [popEye, setPopEye] = useState(false);
+  const hotMatches = UPCOMING_MATCHES.filter((m) => m.hot).slice(0, 2);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 1400);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   const quickActions = [
     { icon: Target, label: 'Predecir', color: '#ffd700', bg: 'rgba(255,215,0,0.12)', path: '/predictions' },

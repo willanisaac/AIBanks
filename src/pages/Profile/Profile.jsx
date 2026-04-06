@@ -10,6 +10,7 @@ import {
   Sun,
   Crown,
   Fire,
+  Coin,
 } from '@phosphor-icons/react';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
 import { USER_PROFILE, UPCOMING_MATCHES } from '../../data/mockData';
