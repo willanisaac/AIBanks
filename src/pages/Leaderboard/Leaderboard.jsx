@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Crown, Fire, Trophy } from '@phosphor-icons/react';
+import { useAuth } from '../../context/AuthContext';
 import { LEADERBOARD_DATA, UPCOMING_MATCHES, USER_PROFILE } from '../../data/mockData';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
 import StarsBackground from '../../components/StarsBackground/StarsBackground';
 import { useWorldCupMatches } from '../../hooks/useWorldCupMatches';
+import { usePoints } from '../../hooks/usePoints';
 import styles from './Leaderboard.module.css';
 
 const TABS = ['Semanal', 'Mensual', 'Global'];
@@ -21,20 +23,10 @@ const staggerItem = {
 export default function Leaderboard() {
   const [activeTab, setActiveTab] = useState('Semanal');
   const { matches } = useWorldCupMatches();
-  const [predictions] = useState(() => {
-    try {
-      const stored = localStorage.getItem('predictions');
-      return stored ? JSON.parse(stored) : {};
-    } catch {
-      return {};
-    }
-  });
+  const { user } = useAuth();
+  const { currentPoints } = usePoints();
 
   const allMatches = matches?.length ? matches : UPCOMING_MATCHES;
-  const earnedPredictionPoints = allMatches
-    .filter((match) => Boolean(predictions[match.id]))
-    .reduce((acc, match) => acc + (match.points || 0), 0);
-  const currentPoints = USER_PROFILE.points + earnedPredictionPoints;
   const currentRank = 1 + LEADERBOARD_DATA.filter((player) => player.points > currentPoints).length;
 
   return (
@@ -48,27 +40,7 @@ export default function Leaderboard() {
         <p className={styles.subtitle}>Compite con otros jugadores</p>
       </motion.div>
 
-      {/* Tabs with animated underline */}
-      <div className={styles.tabs}>
-        {TABS.map((tab) => (
-          <motion.button
-            key={tab}
-            className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ''}`}
-            onClick={() => setActiveTab(tab)}
-            whileTap={{ scale: 0.95 }}
-            style={{ position: 'relative' }}
-          >
-            {tab}
-            {activeTab === tab && (
-              <motion.div
-                className={styles.tabIndicator}
-                layoutId="tabIndicator"
-                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              />
-            )}
-          </motion.button>
-        ))}
-      </div>
+
 
       {/* Podium with StarsBackground */}
       <motion.div
@@ -184,7 +156,7 @@ export default function Leaderboard() {
           </motion.span>
           <span className={styles.yourAvatar}>{USER_PROFILE.avatar}</span>
           <div>
-            <div className={styles.yourName}>Tú ({USER_PROFILE.name})</div>
+            <div className={styles.yourName}>Tú ({user?.name || USER_PROFILE.name})</div>
             <div className={styles.yourTier}><Fire size={16} /> Racha: {USER_PROFILE.streak}</div>
           </div>
         </div>

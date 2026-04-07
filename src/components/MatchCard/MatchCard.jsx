@@ -103,7 +103,7 @@ export default function MatchCard({ match, delay = 0, onPredict, predictedChoice
       <div className={styles.teams}>
         <motion.div
           className={styles.team}
-          whileTap={{ scale: 0.95 }}
+          whileTap={{ scale: 0.98 }}
         >
           <motion.span
             className={styles.flag}
@@ -119,7 +119,27 @@ export default function MatchCard({ match, delay = 0, onPredict, predictedChoice
               {aiData.probabilidades_victoria[match.home.name]}%
             </motion.span>
           )}
+          <motion.button
+            className={`${styles.oddBtn} ${selected === 'home' ? styles.oddSelected : ''} ${confirmed && selected === 'home' ? styles.oddConfirmed : ''}`}
+            onClick={(e) => { e.stopPropagation(); handleSelect('home'); }}
+            whileTap={{ scale: 0.93 }}
+            disabled={confirmed}
+            layout
+          >
+            {selected === 'home' && (
+              <motion.div
+                className={styles.oddSelectedBg}
+                layoutId={`oddBg-${match.id}`}
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              />
+            )}
+            <span className={styles.oddLabel} style={{ width: '100%', textAlign: 'center' }}>Votar</span>
+            {aiData?.gamificacion?.multiplicadores?.[match.home.name] && (
+               <span className={styles.aiMultiplier}>{aiData.gamificacion.multiplicadores[match.home.name]}x</span>
+            )}
+          </motion.button>
         </motion.div>
+        
         <div className={styles.vsWrap}>
           <motion.div
             className={styles.vsCircle}
@@ -130,9 +150,10 @@ export default function MatchCard({ match, delay = 0, onPredict, predictedChoice
           </motion.div>
           <span className={styles.vs}>VS</span>
         </div>
+
         <motion.div
           className={styles.team}
-          whileTap={{ scale: 0.95 }}
+          whileTap={{ scale: 0.98 }}
         >
           <motion.span
             className={styles.flag}
@@ -148,40 +169,29 @@ export default function MatchCard({ match, delay = 0, onPredict, predictedChoice
               {aiData.probabilidades_victoria[match.away.name]}%
             </motion.span>
           )}
-        </motion.div>
-      </div>
-
-      <div className={styles.stadium}>📍 {match.stadium}</div>
-
-      {/* Prediction Buttons (sin cuotas) */}
-      <div className={styles.odds}>
-        {[
-          { key: 'home', label: match.home.code, name: match.home.name },
-          { key: 'draw', label: 'Empate', name: 'draw' },
-          { key: 'away', label: match.away.code, name: match.away.name },
-        ].map(({ key, label, name }) => (
           <motion.button
-            key={key}
-            className={`${styles.oddBtn} ${selected === key ? styles.oddSelected : ''} ${confirmed && selected === key ? styles.oddConfirmed : ''}`}
-            onClick={() => handleSelect(key)}
+            className={`${styles.oddBtn} ${selected === 'away' ? styles.oddSelected : ''} ${confirmed && selected === 'away' ? styles.oddConfirmed : ''}`}
+            onClick={(e) => { e.stopPropagation(); handleSelect('away'); }}
             whileTap={{ scale: 0.93 }}
             disabled={confirmed}
             layout
           >
-            {selected === key && (
+            {selected === 'away' && (
               <motion.div
                 className={styles.oddSelectedBg}
                 layoutId={`oddBg-${match.id}`}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               />
             )}
-            <span className={styles.oddLabel} style={{ width: '100%', textAlign: 'center' }}>{label}</span>
-            {aiData?.gamificacion?.multiplicadores?.[name] && (
-               <span className={styles.aiMultiplier}>{aiData.gamificacion.multiplicadores[name]}x</span>
+            <span className={styles.oddLabel} style={{ width: '100%', textAlign: 'center' }}>Votar</span>
+            {aiData?.gamificacion?.multiplicadores?.[match.away.name] && (
+               <span className={styles.aiMultiplier}>{aiData.gamificacion.multiplicadores[match.away.name]}x</span>
             )}
           </motion.button>
-        ))}
+        </motion.div>
       </div>
+
+      <div className={styles.stadium}>📍 {match.stadium}</div>
 
       {/* Points & Confirm */}
       <div className={styles.footer}>

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Bell, Eye, Moon, Sun } from '@phosphor-icons/react';
+import { Eye, Moon, Sun } from '@phosphor-icons/react';
 import { USER_PROFILE } from '../../data/mockData';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -36,10 +36,7 @@ export default function TopBar() {
         >
           {theme === 'dark' ? <Sun size={22} weight="bold" /> : <Moon size={22} weight="bold" />}
         </motion.button>
-        <button className={styles.iconBtn} aria-label="Notificaciones">
-          <Bell size={22} weight="bold" />
-          <span className={styles.notifDot} />
-        </button>
+
       </div>
     </header>
   );

@@ -11,6 +11,7 @@ import FifaLive from '../../components/FifaLive/FifaLive';
 import { UPCOMING_MATCHES, USER_PROFILE } from '../../data/mockData';
 import { useWorldCupMatches } from '../../hooks/useWorldCupMatches';
 import { useTier } from '../../hooks/useTier';
+import { usePoints } from '../../hooks/usePoints';
 import styles from './Home.module.css';
 
 // Staggered children animation
@@ -29,14 +30,7 @@ export default function Home() {
   const [showBalance, setShowBalance] = useState(true);
   const [claimedBonus, setClaimedBonus] = useState(false);
   const [popEye, setPopEye] = useState(false);
-  const [predictions, setPredictions] = useState(() => {
-    try {
-      const stored = localStorage.getItem('predictions');
-      return stored ? JSON.parse(stored) : {};
-    } catch {
-      return {};
-    }
-  });
+  const { currentPoints, earnedPredictionPoints, predictions, setPredictions } = usePoints();
   const { matches, loading } = useWorldCupMatches();
   const allMatches = matches?.length ? matches : UPCOMING_MATCHES;
   const predictionHistory = Object.entries(predictions)
@@ -45,19 +39,9 @@ export default function Home() {
       return match ? { ...match, prediction: choice } : null;
     })
     .filter(Boolean);
-  const earnedPredictionPoints = predictionHistory.reduce((acc, match) => acc + (match.points || 0), 0);
-  const currentPoints = USER_PROFILE.points + earnedPredictionPoints;
   const pendingMatches = allMatches.filter((match) => !predictions[match.id]);
   const featuredMatches = pendingMatches.filter((match) => match.hot).slice(0, 2);
   const matchesToShow = featuredMatches.length > 0 ? featuredMatches : pendingMatches.slice(0, 2);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('predictions', JSON.stringify(predictions));
-    } catch {
-      // Ignore localStorage write errors
-    }
-  }, [predictions]);
 
   const handlePredict = (matchId, choice) => {
     setPredictions((prev) => ({ ...prev, [matchId]: choice }));

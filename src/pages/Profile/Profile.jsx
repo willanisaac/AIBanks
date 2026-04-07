@@ -20,6 +20,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useWorldCupMatches } from '../../hooks/useWorldCupMatches';
 import { useTier } from '../../hooks/useTier';
+import { usePoints } from '../../hooks/usePoints';
 import styles from './Profile.module.css';
 
 const staggerContainer = {
@@ -37,15 +38,8 @@ export default function Profile() {
   const { theme, toggleTheme } = useTheme();
   const { matches } = useWorldCupMatches();
   const tier = useTier();
-  const [predictions] = useState(() => {
-    try {
-      const stored = localStorage.getItem('predictions');
-      return stored ? JSON.parse(stored) : {};
-    } catch {
-      return {};
-    }
-  });
-  const archetype = localStorage.getItem('archetype') || 'moderado';
+  const { currentPoints, predictions } = usePoints();
+  const archetype = localStorage.getItem('archetype') || 'practico';
   const allMatches = matches?.length ? matches : UPCOMING_MATCHES;
 
   const handleLogout = async () => {
@@ -62,8 +56,6 @@ export default function Profile() {
     return match ? { ...match, prediction: choice } : null;
   }).filter(Boolean);
 
-  const earnedPredictionPoints = predictionHistory.reduce((acc, match) => acc + (match.points || 0), 0);
-  const currentPoints = USER_PROFILE.points + earnedPredictionPoints;
   const currentPredictionsCount = USER_PROFILE.totalPredictions + predictionHistory.length;
   const currentRank = 1 + LEADERBOARD_DATA.filter((player) => player.points > currentPoints).length;
   const recentProfileActivity = predictionHistory.length > 0 ? predictionHistory.slice(0, 4) : USER_PROFILE.recentActivity;
@@ -299,18 +291,18 @@ export default function Profile() {
         >
           <div className={styles.archetypeContent}>
             <span className={styles.archetypeIcon}>
-              {archetype === 'conservador' ? '🛡️' : archetype === 'moderado' ? '⚖️' : '🎰'}
+              {archetype === 'practico' ? '🎁' : archetype === 'acumulador' ? '📈' : '🏆'}
             </span>
             <div>
               <h4 className={styles.archetypeName}>
-                {archetype === 'conservador' ? 'Conservador' : archetype === 'moderado' ? 'Moderado' : 'Arriesgado'}
+                {archetype === 'practico' ? 'Práctico' : archetype === 'acumulador' ? 'Acumulador' : 'Competidor'}
               </h4>
               <p className={styles.archetypeDesc}>
-                {archetype === 'conservador'
-                  ? 'Prefieres premios seguros y estables.'
-                  : archetype === 'moderado'
-                  ? 'Buscas un equilibrio entre riesgo y recompensa.'
-                  : 'Te gustan los premios emocionantes y de alto valor.'}
+                {archetype === 'practico'
+                  ? 'Prefieres utilidad inmediata, canje rápido y beneficios claros.'
+                  : archetype === 'acumulador'
+                  ? 'Prefieres progreso, metas y premios de mayor valor por acumulación.'
+                  : 'Prefieres reconocimiento, posición y premios aspiracionales.'}
               </p>
             </div>
           </div>
