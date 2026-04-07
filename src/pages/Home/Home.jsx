@@ -28,7 +28,10 @@ export default function Home() {
   const navigate = useNavigate();
   const tier = useTier();
   const [showBalance, setShowBalance] = useState(true);
-  const [claimedBonus, setClaimedBonus] = useState(false);
+  const [claimedBonus, setClaimedBonus] = useState(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    return localStorage.getItem('dailyBonusClaimed') === today;
+  });
   const [popEye, setPopEye] = useState(false);
   const { currentPoints, earnedPredictionPoints, predictions, setPredictions } = usePoints();
   const { matches, loading } = useWorldCupMatches();
@@ -227,7 +230,11 @@ export default function Home() {
             <div className={styles.bonusValue}>+50 puntos gratis</div>
           </div>
         </div>
-        <RippleButton variant="green" size="sm" onClick={() => setClaimedBonus(true)} disabled={claimedBonus}>
+        <RippleButton variant="green" size="sm" onClick={() => {
+          const today = new Date().toISOString().slice(0, 10);
+          localStorage.setItem('dailyBonusClaimed', today);
+          setClaimedBonus(true);
+        }} disabled={claimedBonus}>
           {claimedBonus ? 'Reclamado' : 'Reclamar'}
         </RippleButton>
       </motion.section>

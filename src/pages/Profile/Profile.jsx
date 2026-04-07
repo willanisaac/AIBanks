@@ -1,16 +1,19 @@
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   SignOut,
-  Gear,
-  ShieldCheck,
   Info,
   CaretRight,
   Sun,
   Crown,
   Fire,
   Coin,
+  X,
+  Envelope,
+  Globe,
+  Code,
+  Heart,
 } from '@phosphor-icons/react';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
 import FlipCard from '../../components/FlipCard/FlipCard';
@@ -40,6 +43,7 @@ export default function Profile() {
   const tier = useTier();
   const { currentPoints, predictions } = usePoints();
   const archetype = localStorage.getItem('archetype') || 'practico';
+  const [showAboutModal, setShowAboutModal] = useState(false);
   const allMatches = matches?.length ? matches : UPCOMING_MATCHES;
 
   const handleLogout = async () => {
@@ -357,9 +361,7 @@ export default function Profile() {
               value: theme === 'dark' ? 'Oscuro' : 'Claro',
               action: toggleTheme,
             },
-            { icon: <Gear size={20} weight="bold" />, label: 'Configuración' },
-            { icon: <ShieldCheck size={20} weight="bold" />, label: 'Seguridad' },
-            { icon: <Info size={20} weight="bold" />, label: 'Acerca de' },
+            { icon: <Info size={20} weight="bold" />, label: 'Acerca de', action: () => setShowAboutModal(true) },
             {
               icon: <SignOut size={20} weight="bold" />,
               label: 'Cerrar Sesión',
@@ -391,6 +393,71 @@ export default function Profile() {
           ))}
         </motion.div>
       </section>
+
+      {/* About Modal */}
+      <AnimatePresence>
+        {showAboutModal && (
+          <motion.div
+            className={styles.modalOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowAboutModal(false)}
+          >
+            <motion.div
+              className={styles.modalContent}
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 40, scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.modalHeader}>
+                <Info size={24} weight="bold" style={{ color: 'var(--gold-primary)' }} />
+                <h3 className={styles.modalTitle}>Acerca de AI Banks</h3>
+                <motion.button className={styles.modalClose} onClick={() => setShowAboutModal(false)} whileTap={{ scale: 0.85 }}>
+                  <X size={20} weight="bold" />
+                </motion.button>
+              </div>
+              <div className={styles.modalBody}>
+                <div className={styles.aboutHero}>
+                  <span className={styles.aboutLogo}>⚽</span>
+                  <h4 className={styles.aboutAppName}>AI Banks Ecuador</h4>
+                  <span className={styles.aboutVersion}>Versión 1.0.0</span>
+                </div>
+                <div className={styles.infoRow}>
+                  <Globe size={20} weight="bold" className={styles.infoIcon} />
+                  <div>
+                    <div className={styles.infoLabel}>¿Qué es AI Banks?</div>
+                    <div className={styles.infoDesc}>Una plataforma de predicciones deportivas impulsada por inteligencia artificial para el Mundial FIFA 2026. Acumula puntos, sube de nivel y gana premios.</div>
+                  </div>
+                </div>
+                <div className={styles.infoRow}>
+                  <Code size={20} weight="bold" className={styles.infoIcon} />
+                  <div>
+                    <div className={styles.infoLabel}>Tecnología</div>
+                    <div className={styles.infoDesc}>Construida con React, Vite, Supabase y modelos de machine learning para predicciones inteligentes.</div>
+                  </div>
+                </div>
+                <div className={styles.infoRow}>
+                  <Heart size={20} weight="bold" className={styles.infoIcon} />
+                  <div>
+                    <div className={styles.infoLabel}>Desarrollado por</div>
+                    <div className={styles.infoDesc}>Equipo AI Banks — powered by Tata Consultancy Services (TCS).</div>
+                  </div>
+                </div>
+                <div className={styles.infoRow}>
+                  <Envelope size={20} weight="bold" className={styles.infoIcon} />
+                  <div>
+                    <div className={styles.infoLabel}>Contacto</div>
+                    <div className={styles.infoDesc}>¿Preguntas o sugerencias? Escríbenos a soporte@aibanks.ec</div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
       <motion.div

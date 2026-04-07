@@ -407,3 +407,108 @@
   color: var(--text-muted);
   opacity: 0.4;
 }
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 20px;
+}
+.modalContent {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 440px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  background: var(--bg-card);
+  z-index: 1;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+.modalTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  flex: 1;
+}
+.modalClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.modalBody {
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.infoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+.infoIcon {
+  flex-shrink: 0;
+  color: var(--gold-primary);
+  margin-top: 2px;
+}
+.infoLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.infoDesc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.aboutHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0 12px;
+}
+.aboutLogo {
+  font-size: 2.5rem;
+}
+.aboutAppName {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--gold-primary);
+}
+.aboutVersion {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 3px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+}
