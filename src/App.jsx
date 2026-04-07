@@ -16,6 +16,7 @@ import Profile from './pages/Profile/Profile';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Questionnaire from './pages/Questionnaire/Questionnaire';
+import AuthCallback from './pages/AuthCallback/AuthCallback';
 
 function AppContent() {
   const { user, hasCompletedOnboarding } = useAuth();
@@ -35,6 +36,7 @@ function AppContent() {
   if (!user) {
     return (
       <Routes>
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<Login />} />
@@ -56,6 +58,7 @@ function AppContent() {
         <TopBar />
         <main style={{ paddingTop: 0 }}>
           <Routes>
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route element={<PageTransition />}>
               <Route path="/" element={<Home />} />
               <Route path="/predictions" element={<Predictions />} />
