@@ -8,6 +8,13 @@ export default defineConfig({
 ],
   server: {
     proxy: {
+      // Proxy ML API to avoid CORS
+      '/api/ml': {
+        target: process.env.VITE_ML_API_URL || 'https://www.kapisg.com/apipronostico',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/ml/, ''),
+        timeout: 10000,
+      },
       // Proxy TheSportsDB API to avoid CORS in the browser
       '/api/thesportsdb': {
         target: 'https://www.thesportsdb.com/api/v1/json/3',
