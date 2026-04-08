@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
 
-const AuthContext = createContext();
+import { AuthContext } from './AuthContextBase';
 
 const translateAuthError = (errorCode, errorDescription) => {
   const decodedDescription = errorDescription
@@ -31,10 +31,6 @@ const syncUserFromSession = (session, setUser) => {
 
   setUser(null);
 };
-
-export function useAuth() {
-  return useContext(AuthContext);
-}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);

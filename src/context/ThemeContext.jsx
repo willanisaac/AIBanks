@@ -1,22 +1,9 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const ThemeContext = createContext();
-
-export function useTheme() {
-  return useContext(ThemeContext);
-}
+import { ThemeContext } from './ThemeContextBase';
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('dark');
-
-  useEffect(() => {
-    const stored = localStorage.getItem('theme');
-    if (stored) {
-      setTheme(stored);
-    } else {
-      setTheme('dark');
-    }
-  }, []);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
 
   useEffect(() => {
     console.log('Setting data-theme to:', theme);

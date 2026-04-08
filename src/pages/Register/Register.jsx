@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { UserPlus } from '@phosphor-icons/react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContextBase';
 import GlowButton from '../../components/GlowButton/GlowButton';
 import useGameSounds from '../../hooks/useGameSounds';
 import styles from './Register.module.css';

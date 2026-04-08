@@ -50,6 +50,11 @@ export function useTier() {
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         
+        // Guardar el segmento crudo (A/B/C/D) para otras experiencias (ej: Gemini prompt)
+        if (data?.segmento_asignado) {
+          sessionStorage.setItem('financial_segment', data.segmento_asignado);
+        }
+
         const mappedTier = SEGMENTO_MAP[data.segmento_asignado] || 'Básico';
         setTier(mappedTier);
         sessionStorage.setItem('financial_tier', mappedTier);

@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { Eye, Moon, Sun, Bank } from '@phosphor-icons/react';
 import { USER_PROFILE } from '../../data/mockData';
-import { useTheme } from '../../context/ThemeContext';
-import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContextBase';
+import { useAuth } from '../../context/AuthContextBase';
 import { useTier } from '../../hooks/useTier';
 import styles from './TopBar.module.css';
 

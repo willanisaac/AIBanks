@@ -65,14 +65,16 @@ export function useFifaData() {
     liveEvents: null,
     source: 'static', // 'static' | 'live'
     lastUpdated: new Date(),
-    isLoading: false,
+    isLoading: true,
     error: null,
   });
 
   const intervalRef = useRef(null);
 
-  const refresh = useCallback(async () => {
-    setState((s) => ({ ...s, isLoading: true }));
+  const refresh = useCallback(async ({ showLoading = true } = {}) => {
+    if (showLoading) {
+      setState((s) => ({ ...s, isLoading: true }));
+    }
     const result = await fetchLiveData();
 
     setState((s) => ({
@@ -87,7 +89,7 @@ export function useFifaData() {
 
   // Initial fetch + polling
   useEffect(() => {
-    refresh();
+    refresh({ showLoading: false });
     intervalRef.current = setInterval(refresh, REFRESH_INTERVAL);
     return () => clearInterval(intervalRef.current);
   }, [refresh]);

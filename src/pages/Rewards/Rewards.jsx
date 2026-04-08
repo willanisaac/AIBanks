@@ -1,14 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Crown, Coin, Check, Gift, Star, CurrencyDollar, TShirt, FilmSlate, Buildings } from '@phosphor-icons/react';
 import FlipCard from '../../components/FlipCard/FlipCard';
 import RippleButton from '../../components/RippleButton/RippleButton';
 import FireworksBackground from '../../components/FireworksBackground/FireworksBackground';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../context/ThemeContextBase';
 import { useTier } from '../../hooks/useTier';
 import { useMAIis } from '../../hooks/useMAIis';
-import { REWARDS_CATALOG, USER_PROFILE } from '../../data/mockData';
 import styles from './Rewards.module.css';
 
 const CATEGORIES = [
@@ -28,16 +27,227 @@ const staggerItem = {
   show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 22 } },
 };
 
+const ARCHETYPE_LABEL = {
+  competidor: 'Competidor',
+  acumulador: 'Acumulador',
+  practico: 'Práctico',
+};
+
+const VALID_ARCHETYPES = new Set(['competidor', 'acumulador', 'practico']);
+
+const toValidArchetype = (value) => (VALID_ARCHETYPES.has(value) ? value : null);
+
+const readAiRecommendation = () => {
+  try {
+    const raw = localStorage.getItem('ai_recommendation');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    if (!toValidArchetype(parsed.arquetipo)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const readStoredArchetype = () => toValidArchetype(localStorage.getItem('archetype'));
+
+const REWARDS_CATALOG = [
+  // Competidor (5)
+  {
+    id: 'comp-worldcup-trip',
+    archetype: 'competidor',
+    category: 'experiences',
+    name: 'Viaje al Mundial 2026',
+    description: 'Vive el Mundial 2026 desde el estadio: viaje + experiencia completa.',
+    cost: 15000,
+    icon: '✈️',
+    popular: true,
+  },
+  {
+    id: 'comp-vip-tickets',
+    archetype: 'competidor',
+    category: 'experiences',
+    name: 'Entradas VIP para un partido del Mundial',
+    description: 'Acceso VIP para sentir el Mundial como un verdadero campeón.',
+    cost: 9000,
+    icon: '🎟️',
+    popular: true,
+  },
+  {
+    id: 'comp-limited-jersey',
+    archetype: 'competidor',
+    category: 'merchandise',
+    name: 'Camiseta oficial edición limitada de selección',
+    description: 'Edición limitada para hinchas que juegan por lo grande.',
+    cost: 3500,
+    icon: '👕',
+  },
+  {
+    id: 'comp-card-upgrade',
+    archetype: 'competidor',
+    category: 'experiences',
+    name: 'Upgrade de categoría de tarjeta o beneficios premium del banco',
+    description: 'Más beneficios premium para que tu experiencia sea de élite.',
+    cost: 7000,
+    icon: '💳',
+  },
+  {
+    id: 'comp-ps5',
+    archetype: 'competidor',
+    category: 'entertainment',
+    name: 'PlayStation 5',
+    description: 'Sube tu nivel: una PS5 puede ser tu próximo gran canje.',
+    cost: 12000,
+    icon: '🎮',
+    popular: true,
+  },
+
+  // Acumulador (5)
+  {
+    id: 'acc-miles-bonus',
+    archetype: 'acumulador',
+    category: 'cashback',
+    name: 'Bono alto de millas',
+    description: 'Acumula y canjea: un impulso grande para tus próximos viajes.',
+    cost: 8000,
+    icon: '🧭',
+    popular: true,
+  },
+  {
+    id: 'acc-high-cashback',
+    archetype: 'acumulador',
+    category: 'cashback',
+    name: 'Cashback acumulado de alto valor',
+    description: 'Convierte tu constancia en un cashback de alto impacto.',
+    cost: 10000,
+    icon: '💰',
+    popular: true,
+  },
+  {
+    id: 'acc-premium-suitcase',
+    archetype: 'acumulador',
+    category: 'merchandise',
+    name: 'Maleta de viaje premium',
+    description: 'Lista para despegar: calidad premium para tus próximas metas.',
+    cost: 4500,
+    icon: '🧳',
+  },
+  {
+    id: 'acc-mid-phone',
+    archetype: 'acumulador',
+    category: 'entertainment',
+    name: 'Celular gama media',
+    description: 'Un upgrade práctico para tu día a día, a punta de puntos.',
+    cost: 6500,
+    icon: '📱',
+  },
+  {
+    id: 'acc-premium-headphones',
+    archetype: 'acumulador',
+    category: 'entertainment',
+    name: 'Audífonos inalámbricos premium',
+    description: 'Audio premium para acompañar tu racha de predicciones.',
+    cost: 5500,
+    icon: '🎧',
+  },
+
+  // Práctico (5)
+  {
+    id: 'prac-instant-cashback',
+    archetype: 'practico',
+    category: 'cashback',
+    name: 'Cashback inmediato a la cuenta',
+    description: 'Beneficio directo: canje rápido y sin complicaciones.',
+    cost: 2000,
+    icon: '⚡',
+    popular: true,
+  },
+  {
+    id: 'prac-gift-card',
+    archetype: 'practico',
+    category: 'cashback',
+    name: 'Gift card de supermercado o retail',
+    description: 'Ahorro real para compras del día a día.',
+    cost: 2500,
+    icon: '🛒',
+    popular: true,
+  },
+  {
+    id: 'prac-discounts',
+    archetype: 'practico',
+    category: 'cashback',
+    name: 'Descuentos en comercios aliados',
+    description: 'Descuentos listos para usar en tus marcas aliadas.',
+    cost: 1500,
+    icon: '🏷️',
+  },
+  {
+    id: 'prac-speaker',
+    archetype: 'practico',
+    category: 'entertainment',
+    name: 'Parlante portátil',
+    description: 'Música a donde vayas: canje rápido, disfrute inmediato.',
+    cost: 3200,
+    icon: '🔊',
+  },
+  {
+    id: 'prac-power-bank',
+    archetype: 'practico',
+    category: 'merchandise',
+    name: 'Power bank',
+    description: 'Energía extra para tu rutina: práctico y útil.',
+    cost: 1800,
+    icon: '🔋',
+  },
+];
+
+const getEngagementCopy = (archetype) => {
+  switch (archetype) {
+    case 'competidor':
+      return '¿Te interesa una PlayStation 5 o un Viaje al Mundial 2026? Participa en cada pronóstico, suma puntos y vuelve mañana por nuevos retos.';
+    case 'acumulador':
+      return 'Tu meta puede ser un Cashback acumulado de alto valor o un Bono alto de millas. Mantén tu racha: participa a diario y deja que tus puntos crezcan.';
+    case 'practico':
+    default:
+      return '¿Prefieres beneficios rápidos? Cashback inmediato a la cuenta o una Gift card pueden ser tu próximo canje. Participa hoy y vuelve mañana por más puntos.';
+  }
+};
+
 export default function Rewards() {
   const { theme } = useTheme();
   const tier = useTier();
-  const getValidArchetype = () => {
-    const saved = localStorage.getItem('archetype');
-    return ['competidor', 'acumulador', 'practico'].includes(saved) ? saved : null;
-  };
 
-  const [archetype, setArchetype] = useState(getValidArchetype());
-  const [showOnboarding, setShowOnboarding] = useState(!getValidArchetype());
+  const [aiRecommendation, setAiRecommendation] = useState(readAiRecommendation);
+
+  const [archetype, setArchetype] = useState(() => {
+    const rec = readAiRecommendation();
+    return toValidArchetype(rec?.arquetipo) || readStoredArchetype();
+  });
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    const rec = readAiRecommendation();
+    return !(toValidArchetype(rec?.arquetipo) || readStoredArchetype());
+  });
+
+  useEffect(() => {
+    const sync = () => {
+      const rec = readAiRecommendation();
+      setAiRecommendation(rec);
+
+      const nextArchetype = toValidArchetype(rec?.arquetipo) || readStoredArchetype();
+      if (nextArchetype) {
+        setArchetype(nextArchetype);
+        setShowOnboarding(false);
+      }
+    };
+
+    window.addEventListener('storage', sync);
+    window.addEventListener('local-storage', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('local-storage', sync);
+    };
+  }, []);
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState({ competidor: 0, acumulador: 0, practico: 0 });
 
@@ -46,7 +256,10 @@ export default function Rewards() {
   const [showFireworks, setShowFireworks] = useState(false);
   const [lastRedeemed, setLastRedeemed] = useState(null);
 
-  const recommended = archetype ? REWARDS_CATALOG.filter((r) => r.archetype === archetype).slice(0, 4) : [];
+  const effectiveArchetype = toValidArchetype(aiRecommendation?.arquetipo) || archetype;
+  const recommended = effectiveArchetype
+    ? REWARDS_CATALOG.filter((r) => r.archetype === effectiveArchetype)
+    : [];
   const filtered =
     activeCategory === 'all'
       ? REWARDS_CATALOG
@@ -112,12 +325,6 @@ export default function Rewards() {
       ]
     }
   ];
-
-  const archetypeExplanations = {
-    competidor: "Prefiere reconocimiento, posición y premios aspiracionales.",
-    acumulador: "Prefiere progreso, metas y premios de mayor valor por acumulación.",
-    practico: "Prefiere utilidad inmediata, canje rápido y beneficios claros."
-  };
 
   return (
     <div className={styles.page}>
@@ -199,14 +406,21 @@ export default function Rewards() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        {archetype && (
-          <div className={styles.archExplainer}>
-            <p>Usamos 3 arquetipos simples para identificar qué motiva a cada cliente dentro de la experiencia gamificada: competir, acumular o obtener beneficios rápidos. Con solo 2 preguntas y una tercera de desempate, personalizamos la experiencia y priorizamos el tipo de premio más atractivo para cada perfil.</p>
-            <br/>
-            <p>
-              <strong>Perfil {archetype.charAt(0).toUpperCase() + archetype.slice(1)}:</strong> {archetypeExplanations[archetype]}
+        {effectiveArchetype && (
+          <motion.div
+            className={styles.aiCard}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+          >
+            <div className={styles.aiProfileLine}>
+              Perfil detectado: <strong>{ARCHETYPE_LABEL[effectiveArchetype] || effectiveArchetype}</strong>
+            </div>
+
+            <p className={styles.aiMessage}>
+              {getEngagementCopy(effectiveArchetype)}
             </p>
-          </div>
+          </motion.div>
         )}
 
         <h3 className={styles.sectionTitle}><Star size={18} /> Recomendados exclusivamente para ti</h3>

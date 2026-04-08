@@ -4,9 +4,11 @@ import { Fire, Coin, Check } from '@phosphor-icons/react';
 import styles from './MatchCard.module.css';
 
 export default function MatchCard({ match, delay = 0, onPredict, predictedChoice }) {
-  const [selected, setSelected] = useState(predictedChoice || null);
-  const [confirmed, setConfirmed] = useState(!!predictedChoice);
+  const [pendingChoice, setPendingChoice] = useState(null);
   const [aiData, setAiData] = useState(null);
+
+  const selected = predictedChoice ?? pendingChoice;
+  const confirmed = Boolean(predictedChoice);
 
   useEffect(() => {
     async function fetchAI() {
@@ -28,25 +30,13 @@ export default function MatchCard({ match, delay = 0, onPredict, predictedChoice
     fetchAI();
   }, [match.home.name, match.away.name]);
 
-  useEffect(() => {
-    if (predictedChoice) {
-      setSelected(predictedChoice);
-      setConfirmed(true);
-      return;
-    }
-
-    setSelected(null);
-    setConfirmed(false);
-  }, [predictedChoice]);
-
   const handleSelect = (choice) => {
     if (confirmed) return;
-    setSelected(choice);
+    setPendingChoice(choice);
   };
 
   const handleConfirm = () => {
     if (!selected) return;
-    setConfirmed(true);
     onPredict?.(match.id, selected);
   };
 

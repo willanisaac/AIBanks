@@ -129,7 +129,7 @@ export default function FootballMeteors({
   const ballsRef = useRef([]);
   const animRef = useRef();
 
-  const animate = useCallback((ctx, canvas) => {
+  const animate = useCallback(function animateFrame(ctx, canvas) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ballsRef.current.forEach((ball) => {
@@ -137,7 +137,7 @@ export default function FootballMeteors({
       ball.draw(ctx);
     });
 
-    animRef.current = requestAnimationFrame(() => animate(ctx, canvas));
+    animRef.current = requestAnimationFrame(() => animateFrame(ctx, canvas));
   }, []);
 
   useEffect(() => {

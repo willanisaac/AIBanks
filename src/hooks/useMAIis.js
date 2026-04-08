@@ -86,7 +86,11 @@ export function useMAIis() {
 
         const storedBank = window.localStorage.getItem('earnedBankMAIis');
         if (storedBank) setEarnedBankMAIisState(parseInt(storedBank, 10));
-      } catch {}
+      } catch (err) {
+        if (import.meta.env.DEV) {
+          console.warn('Failed to sync from localStorage', err);
+        }
+      }
     };
 
     window.addEventListener('storage', handleStorage);

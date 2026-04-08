@@ -88,7 +88,7 @@ export default function FireworksBackground({
   const timerRef = useRef();
   const activeRef = useRef(true);
 
-  const animate = useCallback((ctx, canvas) => {
+  const animate = useCallback(function animateFrame(ctx, canvas) {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -103,7 +103,7 @@ export default function FireworksBackground({
       fireworksRef.current.push(new Firework(canvas, colors));
     }
 
-    animFrameRef.current = requestAnimationFrame(() => animate(ctx, canvas));
+    animFrameRef.current = requestAnimationFrame(() => animateFrame(ctx, canvas));
   }, [colors, population]);
 
   useEffect(() => {

@@ -1,11 +1,9 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Crown, Fire, Trophy } from '@phosphor-icons/react';
-import { useAuth } from '../../context/AuthContext';
-import { LEADERBOARD_DATA, UPCOMING_MATCHES, USER_PROFILE } from '../../data/mockData';
+import { useAuth } from '../../context/AuthContextBase';
+import { LEADERBOARD_DATA, USER_PROFILE } from '../../data/mockData';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
 import StarsBackground from '../../components/StarsBackground/StarsBackground';
-import { useWorldCupMatches } from '../../hooks/useWorldCupMatches';
 import { useMAIis } from '../../hooks/useMAIis';
 import styles from './Leaderboard.module.css';
 
@@ -21,12 +19,8 @@ const staggerItem = {
 };
 
 export default function Leaderboard() {
-  const [activeTab, setActiveTab] = useState('Semanal');
-  const { matches } = useWorldCupMatches();
   const { user } = useAuth();
   const { currentMAIis } = useMAIis();
-
-  const allMatches = matches?.length ? matches : UPCOMING_MATCHES;
   const currentRank = 1 + LEADERBOARD_DATA.filter((player) => player.points > currentMAIis).length;
 
   return (

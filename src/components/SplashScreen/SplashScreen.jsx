@@ -96,7 +96,7 @@ function PoweredByScreen({ onTap }) {
   );
 }
 
-export default function SplashScreen({ onComplete }) {
+export default function SplashScreen() {
   const { playSwoosh, playCoin, playElegant } = useGameSounds();
   const [phase, setPhase] = useState('powered'); // 'powered' | 'main'
   const [tapped, setTapped] = useState(false);

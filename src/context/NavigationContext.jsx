@@ -1,5 +1,7 @@
-import { createContext, useContext, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
+
+import { NavigationContext } from './NavigationContextBase';
 
 // Navigation order maps path to index for directional transitions
 const NAV_ORDER = {
@@ -9,15 +11,6 @@ const NAV_ORDER = {
   '/leaderboard': 3,
   '/profile': 4,
 };
-
-const NavigationContext = createContext({
-  direction: 0,
-  setDirection: () => {},
-});
-
-export function useNavigationDirection() {
-  return useContext(NavigationContext);
-}
 
 export function NavigationProvider({ children }) {
   const location = useLocation();

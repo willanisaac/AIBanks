@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SignIn } from '@phosphor-icons/react';
-import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContextBase';
+import { useTheme } from '../../context/ThemeContextBase';
 import GlowButton from '../../components/GlowButton/GlowButton';
 import useGameSounds from '../../hooks/useGameSounds';
 import styles from './Login.module.css';
@@ -112,7 +112,7 @@ export default function Login() {
   const location = useLocation();
   const { login, error: authError, clearError } = useAuth();
   const { theme } = useTheme();
-  const { playLoginLong, playError, playClick } = useGameSounds();
+  const { playLoginLong, playError } = useGameSounds();
   const [formData, setFormData] = useState({
     email: '',
     password: '',

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, Outlet } from 'react-router-dom';
-import { useNavigationDirection } from '../../context/NavigationContext';
+import { useNavigationDirection } from '../../context/NavigationContextBase';
 
 const SLIDE_DISTANCE = 60;
 

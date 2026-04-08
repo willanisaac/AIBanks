@@ -51,13 +51,13 @@ export default function StarsBackground({
   const starsRef = useRef([]);
   const animRef = useRef();
 
-  const animate = useCallback((ctx, canvas) => {
+  const animate = useCallback(function animateFrame(ctx, canvas) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     starsRef.current.forEach(star => {
       star.update();
       star.draw(ctx);
     });
-    animRef.current = requestAnimationFrame(() => animate(ctx, canvas));
+    animRef.current = requestAnimationFrame(() => animateFrame(ctx, canvas));
   }, []);
 
   useEffect(() => {
