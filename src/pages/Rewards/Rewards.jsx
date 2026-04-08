@@ -7,7 +7,7 @@ import FireworksBackground from '../../components/FireworksBackground/FireworksB
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
 import { useTheme } from '../../context/ThemeContext';
 import { useTier } from '../../hooks/useTier';
-import { usePoints } from '../../hooks/usePoints';
+import { useMAIis } from '../../hooks/useMAIis';
 import { REWARDS_CATALOG, USER_PROFILE } from '../../data/mockData';
 import styles from './Rewards.module.css';
 
@@ -42,7 +42,7 @@ export default function Rewards() {
   const [answers, setAnswers] = useState({ competidor: 0, acumulador: 0, practico: 0 });
 
   const [activeCategory, setActiveCategory] = useState('all');
-  const { currentPoints, redeemedRewards: redeemed, redeemReward } = usePoints();
+  const { currentMAIis, redeemedRewards: redeemed, redeemReward } = useMAIis();
   const [showFireworks, setShowFireworks] = useState(false);
   const [lastRedeemed, setLastRedeemed] = useState(null);
 
@@ -53,7 +53,7 @@ export default function Rewards() {
       : REWARDS_CATALOG.filter((r) => r.category === activeCategory);
 
   const handleRedeem = (reward) => {
-    if (currentPoints < reward.cost || redeemed[reward.id]) return;
+    if (currentMAIis < reward.cost || redeemed[reward.id]) return;
     redeemReward(reward);
     setLastRedeemed(reward);
     setShowFireworks(true);
@@ -188,7 +188,8 @@ export default function Rewards() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h2 className={styles.title}><Gift size={24} /> Premios</h2>
+        <h2 className={styles.title}><Gift size={24} /> Beneficios AIBank</h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '4px' }}>Canjea tus mAIis por recompensas exclusivas.</p>
       </motion.div>
 
       {/* Recommended Section */}
@@ -220,7 +221,7 @@ export default function Rewards() {
                     <p className={styles.rewardDesc}>{reward.description}</p>
                     <div className={styles.rewardCost}>
                       <AnimatedCounter value={reward.cost} />
-                      <span className={styles.pointsLabel}>pts</span>
+                      <span className={styles.pointsLabel}>mAIis</span>
                     </div>
                   </div>
                 }
@@ -229,7 +230,7 @@ export default function Rewards() {
                     <p>¿Canjear este premio?</p>
                     <RippleButton
                       onClick={() => handleRedeem(reward)}
-                      disabled={currentPoints < reward.cost || redeemed[reward.id]}
+                      disabled={currentMAIis < reward.cost || redeemed[reward.id]}
                       className={redeemed[reward.id] ? styles.redeemedBtn : ''}
                     >
                       {redeemed[reward.id] ? <>Canjeado <Check size={14} /></> : 'Canjear'}
@@ -254,10 +255,10 @@ export default function Rewards() {
           <div className={styles.balanceValue}>
             <Coin size={20} />
             <AnimatedCounter
-              value={currentPoints.toLocaleString()}
+              value={currentMAIis.toLocaleString()}
               className={styles.balanceNum}
             />
-            <span className={styles.balanceCurrency}>pts</span>
+            <span className={styles.balanceCurrency}>mAIis</span>
           </div>
         </div>
         <motion.div
@@ -304,7 +305,7 @@ export default function Rewards() {
           exit={{ opacity: 0, y: -10 }}
         >
           {filtered.map((reward, index) => {
-            const canAfford = currentPoints >= reward.cost;
+            const canAfford = currentMAIis >= reward.cost;
             const isRedeemed = redeemed[reward.id];
 
             return (

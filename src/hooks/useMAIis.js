@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { USER_PROFILE, UPCOMING_MATCHES } from '../data/mockData';
 import { useWorldCupMatches } from './useWorldCupMatches';
 
-export function usePoints() {
+export function useMAIis() {
   const { matches } = useWorldCupMatches();
   const allMatches = matches?.length ? matches : UPCOMING_MATCHES;
 
@@ -24,33 +24,51 @@ export function usePoints() {
     }
   });
 
-  // Calcular puntos ganados
-  const earnedPredictionPoints = Object.entries(predictions).reduce((acc, [matchId]) => {
+  const [earnedBankMAIis, setEarnedBankMAIisState] = useState(() => {
+    try {
+      const stored = window.localStorage.getItem('earnedBankMAIis');
+      return stored ? parseInt(stored, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
+
+  // Calcular mAIis ganados en predicciones
+  const earnedPredictionMAIis = Object.entries(predictions).reduce((acc, [matchId]) => {
     const match = allMatches.find((m) => String(m.id) === String(matchId));
     return acc + (match ? (match.points || 0) : 0);
   }, 0);
 
-  // Calcular puntos gastados
-  const spentPoints = Object.values(redeemedRewards).reduce((acc, reward) => {
+  // Calcular mAIis gastados
+  const spentMAIis = Object.values(redeemedRewards).reduce((acc, reward) => {
     return acc + (reward.cost || 0);
   }, 0);
 
-  // Puntos netos
-  const currentPoints = USER_PROFILE.points + earnedPredictionPoints - spentPoints;
+  // mAIis netos (perfil + predicciones + transacciones banco - gastados)
+  const currentMAIis = USER_PROFILE.points + earnedPredictionMAIis + earnedBankMAIis - spentMAIis;
 
   const redeemReward = useCallback((reward) => {
-    if (currentPoints >= reward.cost && !redeemedRewards[reward.id]) {
+    if (currentMAIis >= reward.cost && !redeemedRewards[reward.id]) {
       const newRedeemed = { ...redeemedRewards, [reward.id]: reward };
       setRedeemedRewards(newRedeemed);
       window.localStorage.setItem('redeemedRewards', JSON.stringify(newRedeemed));
       window.dispatchEvent(new Event('local-storage'));
     }
-  }, [currentPoints, redeemedRewards]);
+  }, [currentMAIis, redeemedRewards]);
 
   const setPredictions = useCallback((newPredsInput) => {
     setPredictionsState((prev) => {
       const next = typeof newPredsInput === 'function' ? newPredsInput(prev) : newPredsInput;
       window.localStorage.setItem('predictions', JSON.stringify(next));
+      window.dispatchEvent(new Event('local-storage'));
+      return next;
+    });
+  }, []);
+
+  const addBankMAIis = useCallback((amount) => {
+    setEarnedBankMAIisState((prev) => {
+      const next = prev + amount;
+      window.localStorage.setItem('earnedBankMAIis', next.toString());
       window.dispatchEvent(new Event('local-storage'));
       return next;
     });
@@ -65,6 +83,9 @@ export function usePoints() {
         
         const storedPreds = window.localStorage.getItem('predictions');
         if (storedPreds) setPredictionsState(JSON.parse(storedPreds));
+
+        const storedBank = window.localStorage.getItem('earnedBankMAIis');
+        if (storedBank) setEarnedBankMAIisState(parseInt(storedBank, 10));
       } catch {}
     };
 
@@ -77,12 +98,14 @@ export function usePoints() {
   }, []);
 
   return {
-    currentPoints,
-    earnedPredictionPoints,
-    spentPoints,
+    currentMAIis,
+    earnedPredictionMAIis,
+    spentMAIis,
+    earnedBankMAIis,
     redeemedRewards,
     redeemReward,
     predictions,
-    setPredictions
+    setPredictions,
+    addBankMAIis
   };
 }

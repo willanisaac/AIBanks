@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import {
   House,
   Trophy,
-  Target,
+  SoccerBall,
   Gift,
   UserCircle,
 } from '@phosphor-icons/react';
@@ -11,11 +11,11 @@ import useGameSounds from '../../hooks/useGameSounds';
 import styles from './BottomNav.module.css';
 
 const NAV_ITEMS = [
-  { to: '/', icon: House, label: 'Inicio' },
-  { to: '/rewards', icon: Gift, label: 'Premios' },
-  { to: '/predictions', icon: Target, label: 'Predecir', center: true },
+  { to: '/', icon: House, label: 'Banco' },
+  { to: '/rewards', icon: Gift, label: 'Beneficios' },
+  { to: '/season', icon: SoccerBall, label: 'Mundial', center: true },
   { to: '/leaderboard', icon: Trophy, label: 'Ranking' },
-  { to: '/profile', icon: UserCircle, label: 'Perfil' },
+  { to: '/profile', icon: UserCircle, label: 'Mi AIBank' },
 ];
 
 export default function BottomNav() {

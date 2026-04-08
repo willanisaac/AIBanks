@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Eye, Moon, Sun } from '@phosphor-icons/react';
+import { Eye, Moon, Sun, Bank } from '@phosphor-icons/react';
 import { USER_PROFILE } from '../../data/mockData';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -14,7 +14,11 @@ export default function TopBar() {
   return (
     <header className={styles.header}>
       <div className={styles.left}>
-        <div className={styles.avatar}>
+        <div className={styles.brand}>
+          <Bank size={24} weight="fill" className={styles.brandIcon} />
+          <span className={styles.brandText}>AIBank</span>
+        </div>
+        <div className={styles.avatar} style={{ marginLeft: '6px' }}>
           <span>{USER_PROFILE.avatar}</span>
         </div>
         <motion.div

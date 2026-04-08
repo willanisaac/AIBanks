@@ -18,6 +18,20 @@
   gap: 12px;
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-blue);
+}
+
+.brandText {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.5px;
+}
+
 .avatar {
   width: 40px;
   height: 40px;

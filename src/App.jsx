@@ -9,6 +9,7 @@ import BottomNav from './components/BottomNav/BottomNav';
 import PageTransition from './components/PageTransition/PageTransition';
 import SplashScreen from './components/SplashScreen/SplashScreen';
 import Home from './pages/Home/Home';
+import WorldCupSeason from './pages/WorldCupSeason/WorldCupSeason';
 import Predictions from './pages/Predictions/Predictions';
 import Rewards from './pages/Rewards/Rewards';
 import Leaderboard from './pages/Leaderboard/Leaderboard';
@@ -61,6 +62,7 @@ function AppContent() {
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route element={<PageTransition />}>
               <Route path="/" element={<Home />} />
+              <Route path="/season" element={<WorldCupSeason />} />
               <Route path="/predictions" element={<Predictions />} />
               <Route path="/rewards" element={<Rewards />} />
               <Route path="/leaderboard" element={<Leaderboard />} />

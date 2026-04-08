@@ -23,7 +23,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useWorldCupMatches } from '../../hooks/useWorldCupMatches';
 import { useTier } from '../../hooks/useTier';
-import { usePoints } from '../../hooks/usePoints';
+import { useMAIis } from '../../hooks/useMAIis';
 import styles from './Profile.module.css';
 
 const staggerContainer = {
@@ -41,7 +41,7 @@ export default function Profile() {
   const { theme, toggleTheme } = useTheme();
   const { matches } = useWorldCupMatches();
   const tier = useTier();
-  const { currentPoints, predictions } = usePoints();
+  const { currentMAIis, predictions } = useMAIis();
   const archetype = localStorage.getItem('archetype') || 'practico';
   const [showAboutModal, setShowAboutModal] = useState(false);
   const allMatches = matches?.length ? matches : UPCOMING_MATCHES;
@@ -61,7 +61,7 @@ export default function Profile() {
   }).filter(Boolean);
 
   const currentPredictionsCount = USER_PROFILE.totalPredictions + predictionHistory.length;
-  const currentRank = 1 + LEADERBOARD_DATA.filter((player) => player.points > currentPoints).length;
+  const currentRank = 1 + LEADERBOARD_DATA.filter((player) => player.points > currentMAIis).length;
   const recentProfileActivity = predictionHistory.length > 0 ? predictionHistory.slice(0, 4) : USER_PROFILE.recentActivity;
 
   const accuracy = USER_PROFILE.winRate;
@@ -75,7 +75,8 @@ export default function Profile() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h2 className={styles.title}>Mi Perfil</h2>
+        <h2 className={styles.title}>Mi AIBank ID</h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '4px' }}>Gestiona tus credenciales y actividad.</p>
       </motion.div>
 
       {/* Profile Card with Stars */}
@@ -115,10 +116,10 @@ export default function Profile() {
           <div className={styles.pointsBig}>
             <Coin size={24} weight="bold" />
             <AnimatedCounter
-              value={currentPoints.toLocaleString()}
+              value={currentMAIis.toLocaleString()}
               className={styles.pointsNum}
             />
-            <span className={styles.ptsCurrency}>puntos</span>
+            <span className={styles.ptsCurrency}>mAIis</span>
           </div>
         </div>
       </motion.div>
@@ -337,7 +338,7 @@ export default function Profile() {
                 <div className={styles.historyPred}>
                   Tu predicción: <strong>{pred.prediction === 'home' ? pred.home.name : pred.prediction === 'away' ? pred.away.name : 'Empate'}</strong>
                 </div>
-                <div className={styles.historyPoints}>+{pred.points} pts</div>
+                <div className={styles.historyPoints}>+{pred.points} mAIis</div>
               </motion.div>
             ))
           ) : (

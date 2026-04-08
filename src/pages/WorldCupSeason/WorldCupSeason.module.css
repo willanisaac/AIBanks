@@ -1,0 +1,334 @@
+.page {
+  padding-bottom: calc(var(--bottom-nav-height) + 20px);
+}
+
+/* Balance Card */
+.balanceCard {
+  margin: 12px 20px 0;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(145deg, var(--bg-card), var(--bg-surface)) padding-box,
+    conic-gradient(from var(--border-angle), var(--rb-1), var(--rb-2), var(--rb-3), var(--rb-4), var(--rb-5), var(--rb-1)) border-box;
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  animation: rotateBorder 4s linear infinite;
+}
+.balanceCard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--gold-primary-rgba), 0.2), transparent);
+}
+.balanceContent {
+  position: relative;
+  z-index: 1;
+}
+.balanceNumWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.balanceTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.balanceLabel {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.eyeBtn {
+  background: none;
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+.eyeBtn:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+.balanceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.balanceValue {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.balanceCoin {
+  font-size: 1.4rem;
+}
+.balanceNum {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+.balancePts {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.balanceArrow {
+  font-size: 1.8rem;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+.balanceBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--gold-primary);
+  font-weight: 600;
+}
+.badgeDot {
+  color: var(--text-muted);
+}
+
+/* Quick Actions */
+.quickActions {
+  display: flex;
+  justify-content: space-around;
+  padding: 24px 20px 8px;
+}
+.quickBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.quickIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+}
+.quickLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Bonus */
+.bonus {
+  margin: 16px 20px;
+  background: rgba(var(--accent-green-rgba), 0.06);
+  border: 1px solid rgba(var(--accent-green-rgba), 0.12);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+.bonus::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--accent-green-rgba), 0.3), transparent);
+}
+.bonusLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.bonusIcon {
+  font-size: 1.6rem;
+}
+.bonusLabel {
+  font-size: 0.62rem;
+  color: var(--accent-green);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+.bonusValue {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.bonusBtn {
+  background: linear-gradient(135deg, #34d399, #059669);
+  color: var(--bg-primary);
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+}
+
+/* Sections */
+.section {
+  padding: 0 20px;
+  margin-bottom: 24px;
+}
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.seeAll {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--gold-primary);
+  font-weight: 600;
+  background: none;
+}
+
+/* Activity / Movements - Deuna style */
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.actItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.actItem:last-child {
+  border-bottom: none;
+}
+.actLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.actAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.actMatch {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.actPred {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+.actRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+.actPoints {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.actBalance {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* Match List */
+.matchList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Promos - Horizontal scroll like Deuna */
+.promoScroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-top: 12px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.promoScroll::-webkit-scrollbar { display: none; }
+
+.promoCard {
+  flex-shrink: 0;
+  width: 220px;
+  border: 1px solid;
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.promoTitle {
+  font-size: 0.92rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+.promoDesc {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  max-width: 140px;
+}
+.promoIconWrap {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+}
+.promoIcon {
+  font-size: 2.2rem;
+  opacity: 0.7;
+}
+
+/* Powered */
+.powered {
+  text-align: center;
+  padding: 24px 20px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.powered strong {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  letter-spacing: 3px;
+}
+.tcsLabel {
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+}

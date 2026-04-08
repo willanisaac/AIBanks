@@ -6,7 +6,7 @@ import { LEADERBOARD_DATA, UPCOMING_MATCHES, USER_PROFILE } from '../../data/moc
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
 import StarsBackground from '../../components/StarsBackground/StarsBackground';
 import { useWorldCupMatches } from '../../hooks/useWorldCupMatches';
-import { usePoints } from '../../hooks/usePoints';
+import { useMAIis } from '../../hooks/useMAIis';
 import styles from './Leaderboard.module.css';
 
 const TABS = ['Semanal', 'Mensual', 'Global'];
@@ -24,10 +24,10 @@ export default function Leaderboard() {
   const [activeTab, setActiveTab] = useState('Semanal');
   const { matches } = useWorldCupMatches();
   const { user } = useAuth();
-  const { currentPoints } = usePoints();
+  const { currentMAIis } = useMAIis();
 
   const allMatches = matches?.length ? matches : UPCOMING_MATCHES;
-  const currentRank = 1 + LEADERBOARD_DATA.filter((player) => player.points > currentPoints).length;
+  const currentRank = 1 + LEADERBOARD_DATA.filter((player) => player.points > currentMAIis).length;
 
   return (
     <div className={styles.page}>
@@ -36,8 +36,8 @@ export default function Leaderboard() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h2 className={styles.title}><Trophy size={24} /> Ranking</h2>
-        <p className={styles.subtitle}>Compite con otros jugadores</p>
+        <h2 className={styles.title}><Trophy size={24} /> Ranking AIBank</h2>
+        <p className={styles.subtitle}>Compite con tus amigos y otros clientes de AIBank.</p>
       </motion.div>
 
 
@@ -161,8 +161,8 @@ export default function Leaderboard() {
           </div>
         </div>
         <div className={styles.yourPoints}>
-          <AnimatedCounter value={currentPoints.toLocaleString()} className={styles.yourPointsNum} />
-          <span className={styles.ptLabel}>pts</span>
+          <AnimatedCounter value={currentMAIis.toLocaleString()} className={styles.yourPointsNum} />
+          <span className={styles.ptLabel}>mAIis</span>
         </div>
       </motion.div>
 
@@ -196,7 +196,7 @@ export default function Leaderboard() {
             <div className={styles.listRight}>
               <div className={styles.listPoints}>
                 <span>{player.points.toLocaleString()}</span>
-                <span className={styles.ptLabel}>pts</span>
+                <span className={styles.ptLabel}>mAIis</span>
               </div>
               <div className={styles.listBar}>
                 <motion.div
