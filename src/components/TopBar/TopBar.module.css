@@ -77,8 +77,8 @@
   position: relative;
   background: rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-sm);
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,6 +87,13 @@
 }
 .iconBtn:active {
   background: rgba(255, 255, 255, 0.1);
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-subtle);
+  margin: 0 4px;
 }
 
 .notifDot {

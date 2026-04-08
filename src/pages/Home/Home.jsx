@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { PaperPlaneRight, Receipt, CreditCard, Bank, CaretRight, X, Trophy } from '@phosphor-icons/react';
 import Confetti from 'react-confetti';
-import { USER_PROFILE } from '../../data/mockData';
 import { useMAIis } from '../../hooks/useMAIis';
 import styles from './Home.module.css';
 
@@ -17,7 +16,6 @@ function TransactionModal({ isOpen, onClose, onSuccess }) {
     if (!amount || !account) return;
     
     setIsProcessing(true);
-    // Simulate API call
     setTimeout(() => {
       setIsProcessing(false);
       onSuccess(250); // Misión paga 250 mAIis
@@ -86,7 +84,7 @@ export default function Home() {
   const handleTransactionSuccess = (earnedPts) => {
     setIsModalOpen(false);
     addBankMAIis(earnedPts);
-    setSuccessMessage(`¡Transferencia Exitosa! Has ganado +${earnedPts} mAIis`);
+    setSuccessMessage(earnedPts);
     setShowConfetti(true);
     setTimeout(() => {
       setShowConfetti(false);
@@ -98,14 +96,14 @@ export default function Home() {
     <div className={styles.dashboardContainer}>
       {showConfetti && <Confetti recycle={false} numberOfPieces={300} />}
       
-      {/* Saludo y Resumen */}
+      {/* Saludo */}
       <header className={styles.header}>
         <h1 className={styles.greeting}>Mis Finanzas</h1>
         <p className={styles.subtitle}>AIBank Móvil</p>
       </header>
 
-      {/* Cuentas y Tarjetas */}
-      <section className={styles.accountsSection}>
+      {/* Cuentas y Tarjetas - Scroll Horizontal */}
+      <section className={styles.accountsScroll}>
         <motion.div 
           className={styles.accountCard}
           initial={{ opacity: 0, x: -20 }}
@@ -143,41 +141,8 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Banner Temporada Mundial */}
-      <motion.section 
-        className={styles.seasonBanner}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        onClick={() => navigate('/season')}
-        whileTap={{ scale: 0.98 }}
-      >
-        <div className={styles.bannerContent}>
-          <div className={styles.bannerTitles}>
-            <span className={styles.seasonTag}>MÓDULO DE RECOMPENSAS</span>
-            <h3 className={styles.bannerTitle}>Temporada Mundial 2026</h3>
-            <p className={styles.bannerDesc}>Tienes <strong>{currentMAIis} mAIis</strong>. ¡Úsalos para predecir y ganar premios!</p>
-          </div>
-          <div className={styles.bannerIcon}>
-            <Trophy size={32} weight="fill" />
-            <CaretRight size={20} weight="bold" />
-          </div>
-        </div>
-      </motion.section>
-
-      {successMessage && (
-        <motion.div 
-          className={styles.alertSuccess}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          {successMessage}
-        </motion.div>
-      )}
-
-      {/* Acciones Rápidas */}
+      {/* Acciones Rápidas (Widget) */}
       <section className={styles.quickActionsSection}>
-        <h3 className={styles.sectionTitle}>Acciones Rápidas</h3>
         <div className={styles.actionsGrid}>
           <button className={styles.actionBtn} onClick={() => setIsModalOpen(true)}>
             <div className={styles.actionIconWrapper} style={{ background: 'rgba(2, 132, 199, 0.1)', color: '#0284c7' }}>
@@ -189,13 +154,13 @@ export default function Home() {
             <div className={styles.actionIconWrapper} style={{ background: 'rgba(5, 150, 105, 0.1)', color: '#059669' }}>
               <Receipt size={24} weight="fill" />
             </div>
-            <span>Pagar Servicios</span>
+            <span>Servicios</span>
           </button>
           <button className={styles.actionBtn}>
             <div className={styles.actionIconWrapper} style={{ background: 'rgba(225, 29, 72, 0.1)', color: '#e11d48' }}>
               <CreditCard size={24} weight="fill" />
             </div>
-            <span>Pagar Tarjeta</span>
+            <span>Tarjetas</span>
           </button>
           <button className={styles.actionBtn}>
             <div className={styles.actionIconWrapper} style={{ background: 'rgba(124, 58, 237, 0.1)', color: '#7c3aed' }}>
@@ -205,6 +170,80 @@ export default function Home() {
           </button>
         </div>
       </section>
+
+      <h3 className={styles.sectionTitle}>Beneficios y Misiones</h3>
+
+      {/* Banner Temporada Mundial */}
+      <motion.section 
+        className={styles.seasonBanner}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        onClick={() => navigate('/season')}
+        whileTap={{ scale: 0.98 }}
+      >
+        <div className={styles.bannerContent}>
+          <div className={styles.bannerTitles}>
+            <span className={styles.seasonTag}>MÓDULO EXCLUSIVO</span>
+            <h3 className={styles.bannerTitle}>Temporada Mundial 2026</h3>
+            <p className={styles.bannerDesc}>Tienes <strong>{currentMAIis} mAIis</strong> disponibles.</p>
+          </div>
+          <div className={styles.bannerIcon}>
+            <Trophy size={32} weight="fill" />
+            <CaretRight size={20} weight="bold" />
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Misiones de Fidelización (Scroll Horizontal) */}
+      <section className={styles.missionsScroll}>
+        <div className={styles.missionCard}>
+          <div className={styles.missionInfo}>
+            <h4>Usa tu Tarjeta</h4>
+            <p>Haz una transferencia con tarjeta hoy mismo.</p>
+            <span className={styles.missionReward}>+250 mAIis</span>
+          </div>
+          <button className={styles.missionActionBtn} onClick={() => setIsModalOpen(true)}>
+            Completar
+          </button>
+        </div>
+        <div className={styles.missionCard}>
+          <div className={styles.missionInfo}>
+            <h4>Meta de Ahorro</h4>
+            <p>Inicia un plan de ahorro Mundial.</p>
+            <span className={styles.missionReward}>+500 mAIis</span>
+          </div>
+          <button className={styles.missionActionBtn} onClick={() => handleTransactionSuccess(500)}>
+            Simular
+          </button>
+        </div>
+        <div className={styles.missionCard}>
+          <div className={styles.missionInfo}>
+            <h4>Actualizar Datos</h4>
+            <p>Confirma tus datos de contacto.</p>
+            <span className={styles.missionReward}>+100 mAIis</span>
+          </div>
+          <button className={styles.missionActionBtn} onClick={() => handleTransactionSuccess(100)}>
+            Actualizar
+          </button>
+        </div>
+      </section>
+
+      {/* Floating Notification */}
+      <AnimatePresence>
+        {successMessage && (
+          <motion.div 
+            className={styles.floatingToast}
+            initial={{ opacity: 0, y: -50, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -50, scale: 0.8 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          >
+            <Trophy size={24} weight="fill" color="var(--gold-primary)" />
+            <span className={styles.toastText}>¡Misión Completada! <strong>+{successMessage} mAIis</strong></span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <TransactionModal 
         isOpen={isModalOpen} 

@@ -14,11 +14,7 @@ export default function TopBar() {
   return (
     <header className={styles.header}>
       <div className={styles.left}>
-        <div className={styles.brand}>
-          <Bank size={24} weight="fill" className={styles.brandIcon} />
-          <span className={styles.brandText}>AIBank</span>
-        </div>
-        <div className={styles.avatar} style={{ marginLeft: '6px' }}>
+        <div className={styles.avatar}>
           <span>{USER_PROFILE.avatar}</span>
         </div>
         <motion.div
@@ -27,20 +23,24 @@ export default function TopBar() {
            animate={{ opacity: 1, x: 0 }}
            transition={{ duration: 0.4 }}
         >
-          <span className={styles.hello}>Hola {user?.name || USER_PROFILE.name} 👋</span>
+          <span className={styles.hello}>Hola, {user?.name || USER_PROFILE.name}</span>
           <span className={styles.tier}>{tier}</span>
         </motion.div>
       </div>
       <div className={styles.right}>
+        <div className={styles.brand}>
+          <Bank size={20} weight="fill" className={styles.brandIcon} />
+          <span className={styles.brandText}>AIBank</span>
+        </div>
+        <div className={styles.divider} />
         <motion.button
           className={styles.iconBtn}
           onClick={toggleTheme}
           aria-label={`Cambiar a tema ${theme === 'dark' ? 'claro' : 'oscuro'}`}
           whileTap={{ scale: 0.9 }}
         >
-          {theme === 'dark' ? <Sun size={22} weight="bold" /> : <Moon size={22} weight="bold" />}
+          {theme === 'dark' ? <Sun size={20} weight="bold" /> : <Moon size={20} weight="bold" />}
         </motion.button>
-
       </div>
     </header>
   );

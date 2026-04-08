@@ -3,10 +3,11 @@
   padding-bottom: calc(var(--bottom-nav-height) + 1.5rem);
   background: var(--bg-primary);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .greeting {
@@ -22,11 +23,31 @@
   font-size: 0.95rem;
 }
 
-.accountsSection {
+.sectionTitle {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Horizontal Accounts */
+.accountsScroll {
   display: flex;
-  flex-direction: column;
+  flex-wrap: nowrap;
   gap: 1rem;
-  margin-bottom: 2rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.accountsScroll::-webkit-scrollbar {
+  display: none;
 }
 
 .accountCard {
@@ -37,6 +58,8 @@
   box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2);
   position: relative;
   overflow: hidden;
+  flex: 0 0 85%;
+  scroll-snap-align: center;
 }
 
 .accountCard::before {
@@ -79,7 +102,6 @@
   flex-direction: column;
   gap: 0.25rem;
 }
-
 .creditCard .label {
   font-size: 0.8rem;
   opacity: 0.8;
@@ -101,11 +123,57 @@
   opacity: 0.8;
 }
 
+/* Quick Actions Widget */
+.quickActionsSection {
+  margin-bottom: 2.5rem;
+  background: var(--bg-card);
+  padding: 1.25rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.actionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.actionIconWrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.actionBtn:hover .actionIconWrapper {
+  transform: translateY(-3px);
+}
+.actionBtn:hover {
+  color: var(--text-primary);
+}
+
+/* Banner Mundial */
 .seasonBanner {
   background: linear-gradient(90deg, #1a1a2e, #3a1c71);
   border-radius: var(--radius-md);
   padding: 1.25rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   cursor: pointer;
   border: 1px solid rgba(213, 0, 249, 0.3);
   box-shadow: 0 8px 20px rgba(58, 28, 113, 0.2);
@@ -158,11 +226,9 @@
   color: #cbd5e1;
   font-size: 0.85rem;
 }
-
 .bannerDesc strong {
   color: #ffd700;
 }
-
 .bannerIcon {
   color: #ffd700;
   display: flex;
@@ -170,53 +236,100 @@
   gap: 8px;
 }
 
-.quickActionsSection {
-  margin-bottom: 2rem;
-}
-
-.sectionTitle {
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.actionsGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+/* Horizontal Missions */
+.missionsScroll {
+  display: flex;
   gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  scroll-snap-type: x mandatory;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+.missionsScroll::-webkit-scrollbar {
+  display: none;
 }
 
-.actionBtn {
+.missionCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  font-weight: 500;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex: 0 0 75%;
+  scroll-snap-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
 }
 
-.actionIconWrapper {
-  width: 50px;
-  height: 50px;
-  border-radius: var(--radius-md);
+.missionInfo h4 {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.missionInfo p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.missionReward {
+  display: inline-block;
+  background: rgba(213, 0, 249, 0.1);
+  color: #d500f9;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.missionActionBtn {
+  background: var(--accent-blue);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+/* Floating Toast */
+.floatingToast {
+  position: fixed;
+  top: 80px; 
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(255,215,0,0.4);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: transform 0.2s;
+  gap: 12px;
+  z-index: 2000;
+  white-space: nowrap;
 }
 
-.actionBtn:hover .actionIconWrapper {
-  transform: translateY(-3px);
-}
-
-.actionBtn:hover {
+.toastText {
   color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.toastText strong {
+  color: var(--gold-primary);
 }
 
+/* Modal Transaccional */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -248,7 +361,6 @@
   padding: 0.5rem;
   border-radius: 50%;
 }
-
 .closeBtn:hover {
   background: rgba(255,255,255,0.1);
   color: var(--text-primary);
@@ -311,15 +423,4 @@
 .submitBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.alertSuccess {
-  background: rgba(52, 211, 153, 0.15);
-  border: 1px solid rgba(52, 211, 153, 0.3);
-  color: #34d399;
-  padding: 1rem;
-  border-radius: var(--radius-md);
-  margin-bottom: 2rem;
-  text-align: center;
-  font-weight: 500;
 }
