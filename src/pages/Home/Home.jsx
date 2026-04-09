@@ -29,6 +29,12 @@ function TransactionModal({ isOpen, onClose, onSuccess, currentUser }) {
   const [error, setError] = useState('');
   const { sendTransferNotification } = useNotifications();
 
+  const [recentRecipients] = useState([
+    { id: '1', name: 'Carlos Mendoza', account: '2200334455', color: '#0ea5e9' },
+    { id: '2', name: 'María López', account: '1100998877', color: '#10b981' },
+    { id: '3', name: 'Andrés Pérez', account: '5500667788', color: '#7c3aed' },
+  ]);
+
   // Cargar usuarios registrados al abrir el modal
   useEffect(() => {
     if (!isOpen || !currentUser?.id) return;
@@ -145,7 +151,7 @@ function TransactionModal({ isOpen, onClose, onSuccess, currentUser }) {
       // 6. Éxito
       setIsProcessing(false);
       setStep('success');
-      onSuccess(earnedMAIles, currentBalance - transferAmount);
+      onSuccess(earnedMAIles);
     } catch (err) {
       console.error('Error en transferencia:', err);
       setError('Ocurrió un error al procesar la transferencia.');
@@ -175,6 +181,28 @@ function TransactionModal({ isOpen, onClose, onSuccess, currentUser }) {
                 <p className={styles.modalDesc}>Transfiere a otros usuarios de AIBank.</p>
 
                 {error && <div className={styles.errorBanner}>{error}</div>}
+
+                <div className={styles.recipientsSection}>
+                  <p className={styles.labelSmall}>Recientes</p>
+                  <div className={styles.recipientsGrid}>
+                    {recentRecipients.map(r => (
+                      <button 
+                        key={r.id} 
+                        className={styles.recipientItem}
+                        type="button"
+                        onClick={() => {
+                          // Intentar emparejar con un usuario de Supabase si existe (por nombre o ID si coinciden)
+                          // Para esta simulación, solo pondremos el ID si está en la lista de usuarios
+                          const match = users.find(u => u.name === r.name);
+                          if (match) setSelectedUserId(match.id);
+                        }}
+                      >
+                        <div className={styles.recipientAvatar} style={{ background: r.color }}>{r.name[0]}</div>
+                        <span>{r.name.split(' ')[0]}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
                 <form onSubmit={handleNext} className={styles.form}>
                   <div className={styles.inputGroup}>
@@ -268,7 +296,9 @@ function TransactionModal({ isOpen, onClose, onSuccess, currentUser }) {
                   <Trophy size={60} weight="fill" color="#ffd700" />
                 </div>
                 <h2 className={styles.modalTitle}>¡Transferencia Exitosa!</h2>
-                <p className={styles.modalDesc}>Has enviado <strong>${amount}</strong> a <strong>{selectedUser?.name}</strong>.</p>
+                <p className={styles.modalDesc}>
+                  ¡Felicidades! Has enviado <strong>${amount}</strong> a <strong>{selectedUser?.name || 'la cuenta destino'}</strong>.
+                </p>
                 <div className={styles.rewardBanner}>
                   <Sparkle size={20} weight="fill" />
                   <span>Ganaste <strong>+250 mAIles</strong></span>
