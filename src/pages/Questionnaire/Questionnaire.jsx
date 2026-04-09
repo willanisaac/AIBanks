@@ -120,7 +120,6 @@ export default function Questionnaire() {
 
   const [status, setStatus] = useState(() => (getStoredRecommendation() ? 'result' : 'quiz')); // quiz | loading | result
   const [aiRecommendation, setAiRecommendation] = useState(getStoredRecommendation);
-  const [aiError, setAiError] = useState(null);
 
   const progress = status === 'quiz'
     ? ((currentQuestion + 1) / questions.length) * 100
@@ -134,7 +133,6 @@ export default function Questionnaire() {
 
   const inferAndFinish = async (scoresSnapshot, selectionsSnapshot) => {
     setStatus('loading');
-    setAiError(null);
 
     const fallbackArchetype = pickWinnerFromScores(scoresSnapshot);
 
@@ -192,7 +190,6 @@ export default function Questionnaire() {
     } catch (err) {
       console.error('Gemini inference failed:', err);
       playError();
-      setAiError('No se pudo conectar con Gemini. Usamos una recomendación estándar.');
 
       const finalRecommendation = buildFallbackRecommendation(fallbackArchetype, userName);
       window.localStorage.setItem('ai_recommendation', JSON.stringify(finalRecommendation));
@@ -291,55 +288,24 @@ export default function Questionnaire() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.4 }}
             >
-              {aiError && (
-                <div className={styles.notice}>
-                  {aiError}
-                </div>
-              )}
-
-              <div className={styles.resultBadge}>
-                Perfil: <strong>{ARCHETYPE_LABEL[aiRecommendation?.arquetipo] || '—'}</strong>
-                {aiRecommendation?.source === 'gemini' ? (
-                  <span className={styles.aiTag}>Gemini</span>
-                ) : (
-                  <span className={styles.aiTag}>Estándar</span>
-                )}
-              </div>
-
-              <h3 className={styles.resultTitle}>Recomendación para ti</h3>
+              <h3 className={styles.resultTitle}>Listo</h3>
 
               <p className={styles.resultText}>
-                {aiRecommendation?.mensaje?.recomendacion || 'Listo. Ya personalizamos tus premios.'}
+                ¿Quieres descubrir lo que nuestro AI-Agent preparó para ti? Revisa nuestros beneficios.
               </p>
-              {aiRecommendation?.mensaje?.motivacion && (
-                <p className={styles.resultTextMuted}>{aiRecommendation.mensaje.motivacion}</p>
-              )}
-
-              <div className={styles.recoList}>
-                {(aiRecommendation?.premios_recomendados || []).slice(0, 5).map((r) => (
-                  <div key={r.nombre} className={styles.recoItem}>
-                    <div className={styles.recoName}>{r.nombre}</div>
-                    {r.razon ? <div className={styles.recoReason}>{r.razon}</div> : null}
-                  </div>
-                ))}
-              </div>
-
-              {aiRecommendation?.mensaje?.retencion && (
-                <p className={styles.retention}>{aiRecommendation.mensaje.retencion}</p>
-              )}
 
               <div className={styles.ctaRow}>
                 <GlowButton
                   variant="gold"
                   fullWidth
                   onClick={async () => {
-                    navigate('/');
                     if (aiRecommendation?.arquetipo) {
                       await completeOnboarding(aiRecommendation.arquetipo);
                     }
+                    navigate('/rewards');
                   }}
                 >
-                  Continuar
+                  Ver beneficios
                 </GlowButton>
               </div>
             </motion.div>

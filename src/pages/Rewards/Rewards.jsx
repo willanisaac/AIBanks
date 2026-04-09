@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Crown, Coin, Check, Gift, Star, CurrencyDollar, TShirt, FilmSlate, Buildings } from '@phosphor-icons/react';
 import FlipCard from '../../components/FlipCard/FlipCard';
@@ -202,18 +202,6 @@ const REWARDS_CATALOG = [
   },
 ];
 
-const getEngagementCopy = (archetype) => {
-  switch (archetype) {
-    case 'competidor':
-      return '¿Te interesa una PlayStation 5 o un Viaje al Mundial 2026? Participa en cada pronóstico, suma puntos y vuelve mañana por nuevos retos.';
-    case 'acumulador':
-      return 'Tu meta puede ser un Cashback acumulado de alto valor o un Bono alto de millas. Mantén tu racha: participa a diario y deja que tus puntos crezcan.';
-    case 'practico':
-    default:
-      return '¿Prefieres beneficios rápidos? Cashback inmediato a la cuenta o una Gift card pueden ser tu próximo canje. Participa hoy y vuelve mañana por más puntos.';
-  }
-};
-
 export default function Rewards() {
   const { theme } = useTheme();
   const tier = useTier();
@@ -256,7 +244,19 @@ export default function Rewards() {
   const [showFireworks, setShowFireworks] = useState(false);
   const [lastRedeemed, setLastRedeemed] = useState(null);
 
+  // IA UI state (oculto hasta que el usuario lo pida)
+  const [aiPanelState, setAiPanelState] = useState('teaser'); // teaser | thinking | shown
+  const [aiThinkingStep, setAiThinkingStep] = useState(0);
+  const aiThinkingTimersRef = useRef([]);
+
   const effectiveArchetype = toValidArchetype(aiRecommendation?.arquetipo) || archetype;
+
+  const aiPrimaryMessage = String(
+    aiRecommendation?.mensaje?.motivacion || aiRecommendation?.mensaje?.recomendacion || ''
+  ).trim();
+  const aiSecondaryMessage = String(aiRecommendation?.mensaje?.retencion || '').trim();
+  const showAiResult = aiPanelState === 'shown' && Boolean(effectiveArchetype);
+
   const recommended = effectiveArchetype
     ? REWARDS_CATALOG.filter((r) => r.archetype === effectiveArchetype)
     : [];
@@ -296,6 +296,27 @@ export default function Rewards() {
     localStorage.setItem('archetype', winner);
     setArchetype(winner);
     setShowOnboarding(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      aiThinkingTimersRef.current.forEach((t) => clearTimeout(t));
+      aiThinkingTimersRef.current = [];
+    };
+  }, []);
+
+  const handleAnalyze = () => {
+    aiThinkingTimersRef.current.forEach((t) => clearTimeout(t));
+    aiThinkingTimersRef.current = [];
+
+    setAiPanelState('thinking');
+    setAiThinkingStep(0);
+
+    aiThinkingTimersRef.current = [
+      setTimeout(() => setAiThinkingStep(1), 650),
+      setTimeout(() => setAiThinkingStep(2), 1300),
+      setTimeout(() => setAiPanelState('shown'), 2000),
+    ];
   };
 
   // Preguntas del quiz
@@ -406,55 +427,123 @@ export default function Rewards() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        {effectiveArchetype && (
-          <motion.div
-            className={styles.aiCard}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-          >
-            <div className={styles.aiProfileLine}>
-              Perfil detectado: <strong>{ARCHETYPE_LABEL[effectiveArchetype] || effectiveArchetype}</strong>
+        <motion.div
+          className={styles.aiCard}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+        >
+          <div className={styles.aiHeader}>
+            <div className={styles.aiTitleRow}>
+              <span className={styles.aiMascot} aria-hidden>
+                🤖
+              </span>
+              <div className={styles.aiTitle}>
+                {aiPanelState === 'shown' ? 'Recomendación para ti' : 'Recomendación con IA'}
+              </div>
             </div>
 
-            <p className={styles.aiMessage}>
-              {getEngagementCopy(effectiveArchetype)}
-            </p>
-          </motion.div>
-        )}
+            <div className={styles.aiSource}>AI-Agent</div>
+          </div>
 
-        <h3 className={styles.sectionTitle}><Star size={18} /> Recomendados exclusivamente para ti</h3>
-        <motion.div className={styles.recommendedGrid} variants={staggerContainer} initial="hidden" animate="show">
-          {recommended.map((reward) => (
-            <motion.div key={reward.id} variants={staggerItem}>
-              <FlipCard
-                front={
-                  <div className={styles.rewardCard}>
-                    <span className={styles.rewardIcon}>{reward.icon}</span>
-                    <h4 className={styles.rewardName}>{reward.name}</h4>
-                    <p className={styles.rewardDesc}>{reward.description}</p>
-                    <div className={styles.rewardCost}>
-                      <AnimatedCounter value={reward.cost} />
-                      <span className={styles.pointsLabel}>mAIis</span>
+          {aiPanelState === 'teaser' ? (
+            <>
+              <p className={styles.aiMessage}>
+                ¿Quieres descubrir lo que nuestro AI-Agent preparó para ti? Revisa nuestros beneficios.
+              </p>
+              <div className={styles.aiCtaRow}>
+                <RippleButton size="sm" fullWidth onClick={handleAnalyze}>
+                  Analizar premios
+                </RippleButton>
+              </div>
+            </>
+          ) : null}
+
+          {aiPanelState === 'thinking' ? (
+            <div className={styles.aiThinking} aria-live="polite">
+              <div className={styles.aiSpinner} aria-hidden />
+              <div className={styles.aiThinkingTitle}>Analizando tus beneficios…</div>
+              <div className={styles.aiThinkingSteps}>
+                <div className={`${styles.aiThinkingStep} ${aiThinkingStep >= 0 ? styles.aiStepActive : ''}`}>
+                  <span className={styles.aiStepDot} aria-hidden />
+                  <span>Leyendo tu perfil</span>
+                </div>
+                <div className={`${styles.aiThinkingStep} ${aiThinkingStep >= 1 ? styles.aiStepActive : ''}`}>
+                  <span className={styles.aiStepDot} aria-hidden />
+                  <span>Comparando beneficios disponibles</span>
+                </div>
+                <div className={`${styles.aiThinkingStep} ${aiThinkingStep >= 2 ? styles.aiStepActive : ''}`}>
+                  <span className={styles.aiStepDot} aria-hidden />
+                  <span>Personalizando recomendaciones</span>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {aiPanelState === 'shown' ? (
+            <>
+              <div className={styles.aiProfileLine}>
+                Perfil detectado: <strong>{ARCHETYPE_LABEL[effectiveArchetype] || effectiveArchetype || '—'}</strong>
+              </div>
+
+              {aiPrimaryMessage ? (
+                <p className={styles.aiMessage}>{aiPrimaryMessage}</p>
+              ) : (
+                <p className={styles.aiMessage}>Listo. Ya personalizamos tus beneficios.</p>
+              )}
+
+              {Array.isArray(aiRecommendation?.premios_recomendados) && aiRecommendation.premios_recomendados.length ? (
+                <div className={styles.aiList}>
+                  {aiRecommendation.premios_recomendados.slice(0, 5).map((r) => (
+                    <div key={r.nombre} className={styles.aiItem}>
+                      <div className={styles.aiItemName}>{r.nombre}</div>
+                      {r.razon ? <div className={styles.aiItemReason}>{r.razon}</div> : null}
                     </div>
-                  </div>
-                }
-                back={
-                  <div className={styles.rewardBack}>
-                    <p>¿Canjear este premio?</p>
-                    <RippleButton
-                      onClick={() => handleRedeem(reward)}
-                      disabled={currentMAIis < reward.cost || redeemed[reward.id]}
-                      className={redeemed[reward.id] ? styles.redeemedBtn : ''}
-                    >
-                      {redeemed[reward.id] ? <>Canjeado <Check size={14} /></> : 'Canjear'}
-                    </RippleButton>
-                  </div>
-                }
-              />
-            </motion.div>
-          ))}
+                  ))}
+                </div>
+              ) : null}
+
+              {aiSecondaryMessage ? <div className={styles.aiRetention}>{aiSecondaryMessage}</div> : null}
+            </>
+          ) : null}
         </motion.div>
+
+        {showAiResult ? (
+          <>
+            <h3 className={styles.sectionTitle}><Star size={18} /> Recomendados exclusivamente para ti</h3>
+            <motion.div className={styles.recommendedGrid} variants={staggerContainer} initial="hidden" animate="show">
+              {recommended.map((reward) => (
+                <motion.div key={reward.id} variants={staggerItem}>
+                  <FlipCard
+                    front={
+                      <div className={styles.rewardCard}>
+                        <span className={styles.rewardIcon}>{reward.icon}</span>
+                        <h4 className={styles.rewardName}>{reward.name}</h4>
+                        <p className={styles.rewardDesc}>{reward.description}</p>
+                        <div className={styles.rewardCost}>
+                          <AnimatedCounter value={reward.cost} />
+                          <span className={styles.pointsLabel}>mAIis</span>
+                        </div>
+                      </div>
+                    }
+                    back={
+                      <div className={styles.rewardBack}>
+                        <p>¿Canjear este premio?</p>
+                        <RippleButton
+                          onClick={() => handleRedeem(reward)}
+                          disabled={currentMAIis < reward.cost || redeemed[reward.id]}
+                          className={redeemed[reward.id] ? styles.redeemedBtn : ''}
+                        >
+                          {redeemed[reward.id] ? <>Canjeado <Check size={14} /></> : 'Canjear'}
+                        </RippleButton>
+                      </div>
+                    }
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </>
+        ) : null}
       </motion.section>
 
       {/* Balance Card */}

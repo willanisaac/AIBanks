@@ -1,4 +1,4 @@
-const DEFAULT_MODEL = 'gemini-1.5-flash';
+const DEFAULT_MODEL = 'gemini-2.5-flash';
 
 const ARCHETYPES = ['competidor', 'acumulador', 'practico'];
 
@@ -27,7 +27,21 @@ const PRIZE_LIBRARY = {
 };
 
 export function isGeminiConfigured() {
-  return Boolean(import.meta.env.VITE_GEMINI_API_KEY);
+  return Boolean(String(import.meta.env.VITE_GEMINI_API_KEY || '').trim());
+}
+
+function normalizeModelName(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return DEFAULT_MODEL;
+
+  // Allow users to paste full resource names from the API (e.g. "models/gemini-2.5-flash")
+  const withoutPrefix = raw.startsWith('models/') ? raw.slice('models/'.length) : raw;
+
+  // Back-compat: older defaults used in this repo.
+  if (withoutPrefix === 'gemini-1.5-flash') return DEFAULT_MODEL;
+  if (withoutPrefix === 'gemini-1.5-pro') return 'gemini-2.5-pro';
+
+  return withoutPrefix;
 }
 
 function safeJsonExtract(text) {
@@ -157,12 +171,12 @@ function buildGeminiPrompt(context) {
 }
 
 export async function inferArchetypeWithGemini(context, options = {}) {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const apiKey = String(import.meta.env.VITE_GEMINI_API_KEY || '').trim();
   if (!apiKey) {
     throw new Error('Falta configurar VITE_GEMINI_API_KEY');
   }
 
-  const model = import.meta.env.VITE_GEMINI_MODEL || DEFAULT_MODEL;
+  const model = normalizeModelName(import.meta.env.VITE_GEMINI_MODEL);
   const prompt = buildGeminiPrompt(context);
 
   const res = await fetch(
@@ -182,6 +196,11 @@ export async function inferArchetypeWithGemini(context, options = {}) {
         generationConfig: {
           temperature: 0.35,
           maxOutputTokens: 512,
+          // Gemini 2.5 usa thinking por defecto; eso puede consumir el presupuesto
+          // de salida y truncar el JSON. Lo desactivamos para respuestas estructuradas.
+          thinkingConfig: {
+            thinkingBudget: 0,
+          },
         },
       }),
       signal: options.signal,

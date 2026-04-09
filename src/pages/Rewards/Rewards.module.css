@@ -149,6 +149,26 @@
   margin-bottom: 10px;
 }
 
+.aiTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aiMascot {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(var(--gold-primary-rgba), 0.12);
+  border: 1px solid var(--border-gold);
+  flex-shrink: 0;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
 .aiTitle {
   font-family: var(--font-display);
   font-size: 0.9rem;
@@ -224,6 +244,67 @@
   line-height: 1.4;
   border-top: 1px solid var(--border-subtle);
   padding-top: 10px;
+}
+
+.aiCtaRow {
+  margin-top: 12px;
+}
+
+.aiThinking {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aiSpinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  margin: 2px auto 0;
+  border: 2px solid var(--border-subtle);
+  border-top-color: var(--gold-primary);
+  animation: aiSpin 0.9s linear infinite;
+}
+
+@keyframes aiSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.aiThinkingTitle {
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.aiThinkingSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.aiThinkingStep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.aiStepDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(var(--gold-primary-rgba), 0.12);
+  border: 1px solid var(--border-gold);
+  flex-shrink: 0;
+}
+
+.aiStepActive {
+  color: var(--text-secondary);
 }
 .sectionTitle {
   font-size: 1.1rem;
