@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, Coin, Check, Gift, Star, CurrencyDollar, TShirt, FilmSlate, Buildings, Bank, Sparkle, SquaresFour, List } from '@phosphor-icons/react';
+import { Crown, Coin, Check, Gift, Star, CurrencyDollar, TShirt, FilmSlate, Buildings, Bank, Sparkle, SquaresFour, List, Trophy } from '@phosphor-icons/react';
+import FlipCard from '../../components/FlipCard/FlipCard';
 import RippleButton from '../../components/RippleButton/RippleButton';
 import FireworksBackground from '../../components/FireworksBackground/FireworksBackground';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
 import { useAuth } from '../../context/AuthContextBase';
 import { useTheme } from '../../context/ThemeContextBase';
+import Leaderboard from '../Leaderboard/Leaderboard';
 import { useTier } from '../../hooks/useTier';
 import { useMAIis } from '../../hooks/useMAIis';
 import { inferArchetypeWithGemini, isGeminiConfigured } from '../../services/gemini';
@@ -362,6 +364,7 @@ export default function Rewards() {
   const { currentMAIis, redeemedRewards: redeemed, redeemReward, predictions } = useMAIis();
   const [showFireworks, setShowFireworks] = useState(false);
   const [lastRedeemed, setLastRedeemed] = useState(null);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   // IA UI state (oculto hasta que el usuario lo pida)
   const [aiPanelState, setAiPanelState] = useState('teaser'); // teaser | thinking | shown
@@ -605,6 +608,12 @@ export default function Rewards() {
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {showLeaderboard && (
+          <Leaderboard onClose={() => setShowLeaderboard(false)} />
+        )}
+      </AnimatePresence>
+
       <motion.div
         className={styles.header}
         initial={{ opacity: 0, y: -10 }}
@@ -638,6 +647,39 @@ export default function Rewards() {
           <Crown size={16} />
           <span>{tier}</span>
         </motion.div>
+      </motion.div>
+
+      <motion.div 
+        onClick={() => setShowLeaderboard(true)}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        style={{ 
+          margin: '0 0 20px 0',
+          background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(167, 139, 250, 0.15) 100%)',
+          border: '1px solid var(--gold-primary)',
+          borderRadius: 'var(--radius-lg)',
+          padding: '14px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          cursor: 'pointer',
+          boxShadow: '0 4px 15px rgba(167, 139, 250, 0.15)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+        whileTap={{ scale: 0.97 }}
+      >
+        <div style={{ position: 'absolute', inset: 0, background: 'var(--gold-shine)', opacity: 0.1, pointerEvents: 'none', animation: 'shimmer 2.5s infinite linear' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', zIndex: 1, position: 'relative' }}>
+          <div style={{ background: 'var(--gold-primary)', color: 'var(--bg-primary)', padding: '8px', borderRadius: '50%' }}>
+            <Trophy size={20} weight="fill" />
+          </div>
+          <div>
+            <div style={{ fontWeight: '700', color: 'var(--text-primary)', fontSize: '0.95rem' }}>Ver Ranking Global</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Compara tu racha y puntaje</div>
+          </div>
+        </div>
+        <div style={{ color: 'var(--gold-primary)', fontSize: '1.5rem', fontWeight: 'bold' }}>›</div>
       </motion.div>
 
       {/* Recommended Section */}
