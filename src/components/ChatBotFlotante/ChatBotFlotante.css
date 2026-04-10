@@ -13,6 +13,36 @@
   pointer-events: auto;
 }
 
+.chatbot-tooltip {
+  position: absolute;
+  right: 80px;
+  bottom: 12px;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-gold);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.chatbot-tooltip::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-gold);
+  border-top: 1px solid var(--border-gold);
+}
+
 .chatbot-button {
   width: 65px;
   height: 65px;

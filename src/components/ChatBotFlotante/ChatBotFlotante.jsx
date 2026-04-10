@@ -125,6 +125,20 @@ export default function ChatBotFlotante() {
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.div 
+            className="chatbot-tooltip"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ delay: 1 }}
+          >
+            ¡Hola! 
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.button 
         className="chatbot-button"
         onClick={() => setIsOpen(!isOpen)}
