@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
 import { Robot, PaperPlaneTilt, X, ChatCircleText } from '@phosphor-icons/react';
 import { getChatResponse } from '../../services/gemini';
 import './ChatBotFlotante.css';
@@ -13,6 +13,8 @@ export default function ChatBotFlotante() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const controls = useAnimationControls();
+
 
   useEffect(() => {
     const TOOLTIP_KEY = 'aibanks_chatbot_tooltip_seen_v1';
@@ -92,8 +94,11 @@ export default function ChatBotFlotante() {
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen) setShowTooltip(false);
-  }, [isOpen]);
+    if (isOpen) {
+      setShowTooltip(false);
+      controls.start({ x: 0, y: 0, transition: { type: 'spring', damping: 25, stiffness: 300 } });
+    }
+  }, [isOpen, controls]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -138,6 +143,7 @@ export default function ChatBotFlotante() {
     <motion.div 
       className="chatbot-container"
       drag
+      animate={controls}
       dragConstraints={{ left: -window.innerWidth + 80, right: 0, top: -window.innerHeight + 160, bottom: 0 }}
       dragElastic={0.1}
       dragMomentum={false}

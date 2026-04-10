@@ -16,14 +16,17 @@ export default function Register() {
     email: '',
     password: '',
     confirmPassword: '',
+    acceptTerms: false,
+    acceptDataPolicy: false,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: type === 'checkbox' ? checked : value,
     });
     setError(null);
     clearError();
@@ -38,6 +41,11 @@ export default function Register() {
       if (formData.password !== formData.confirmPassword) {
         throw new Error('Las contraseñas no coinciden');
       }
+
+      if (!formData.acceptTerms || !formData.acceptDataPolicy) {
+        throw new Error('Debes aceptar los términos y la política de protección de datos');
+      }
+
 
       const result = await register(formData.email, formData.password, formData.name);
       playSuccess();
@@ -131,6 +139,37 @@ export default function Register() {
               required
             />
           </div>
+
+          <div className={styles.legalCheckboxes}>
+            <div className={styles.checkboxGroup}>
+              <input
+                type="checkbox"
+                id="acceptTerms"
+                name="acceptTerms"
+                checked={formData.acceptTerms}
+                onChange={handleChange}
+                className={styles.checkbox}
+              />
+              <label htmlFor="acceptTerms" className={styles.checkboxLabel}>
+                Acepto los <button type="button" className={styles.inlineLink}>Términos y Condiciones</button>
+              </label>
+            </div>
+
+            <div className={styles.checkboxGroup}>
+              <input
+                type="checkbox"
+                id="acceptDataPolicy"
+                name="acceptDataPolicy"
+                checked={formData.acceptDataPolicy}
+                onChange={handleChange}
+                className={styles.checkbox}
+              />
+              <label htmlFor="acceptDataPolicy" className={styles.checkboxLabel}>
+                Acepto el tratamiento de mis datos de acuerdo a la <button type="button" className={styles.inlineLink}>Ley Orgánica de Protección de Datos Personales (Ecuador)</button>
+              </label>
+            </div>
+          </div>
+
           {error && (
             <motion.div
               className={styles.errorMessage}
