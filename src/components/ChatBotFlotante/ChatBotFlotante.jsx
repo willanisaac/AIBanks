@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Robot, PaperPlaneTilt, X, ChatCircleText } from '@phosphor-icons/react';
-import aiAgentLogo from '../../assets/images/ai-agent.png';
 import { getChatResponse } from '../../services/gemini';
 import './ChatBotFlotante.css';
 
@@ -69,7 +68,7 @@ export default function ChatBotFlotante() {
           >
             <div className="chatbot-header">
               <div className="robot-avatar">
-                <img src={aiAgentLogo} alt="AI-Agent" className="avatar-img" />
+                <img src="/ai-agent.png" alt="AI-Agent" className="avatar-img" />
               </div>
               <div className="chatbot-info">
                 <h3>AI-AGENT</h3>
@@ -163,7 +162,7 @@ export default function ChatBotFlotante() {
               exit={{ rotate: -90, opacity: 0 }}
               className="button-icon-wrapper"
             >
-              <img src={aiAgentLogo} alt="AI-Agent" className="button-img" />
+              <img src="/ai-agent.png" alt="AI-Agent" className="button-img" />
             </motion.div>
           )}
         </AnimatePresence>
