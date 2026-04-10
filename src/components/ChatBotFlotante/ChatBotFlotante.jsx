@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Robot, PaperPlaneTilt, X, ChatCircleText } from '@phosphor-icons/react';
+import aiAgentLogo from '../../assets/images/ai-agent.png';
 import { getChatResponse } from '../../services/gemini';
 import './ChatBotFlotante.css';
 
 export default function ChatBotFlotante() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'model', parts: [{ text: '¡Hola! Soy mAIles, tu asistente robot. ¿En qué puedo ayudarte hoy?' }] }
+    { role: 'model', parts: [{ text: '¡Hola! Soy AI-AGENT, tu asistente inteligente. ¿En qué puedo ayudarte hoy?' }] }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -68,10 +69,10 @@ export default function ChatBotFlotante() {
           >
             <div className="chatbot-header">
               <div className="robot-avatar">
-                <Robot weight="fill" size={24} />
+                <img src={aiAgentLogo} alt="AI-Agent" className="avatar-img" />
               </div>
               <div className="chatbot-info">
-                <h3>mAIles Robot</h3>
+                <h3>AI-AGENT</h3>
                 <div className="chatbot-status">
                   <span className="status-dot"></span>
                   En línea
@@ -146,8 +147,9 @@ export default function ChatBotFlotante() {
               initial={{ rotate: 90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
               exit={{ rotate: -90, opacity: 0 }}
+              className="button-icon-wrapper"
             >
-              <Robot weight="fill" />
+              <img src={aiAgentLogo} alt="AI-Agent" className="button-img" />
             </motion.div>
           )}
         </AnimatePresence>
