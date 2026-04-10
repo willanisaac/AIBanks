@@ -22,6 +22,7 @@ import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Questionnaire from './pages/Questionnaire/Questionnaire';
 import AuthCallback from './pages/AuthCallback/AuthCallback';
+import ChatBotFlotante from './components/ChatBotFlotante/ChatBotFlotante';
 
 function AppContent() {
   const { user, hasCompletedOnboarding } = useAuth();
@@ -77,6 +78,7 @@ function AppContent() {
             </Routes>
           </main>
           <BottomNav />
+          <ChatBotFlotante />
         </NavigationProvider>
         <JoyrideManager />
       </motion.div>

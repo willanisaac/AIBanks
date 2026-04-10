@@ -237,33 +237,14 @@ function buildGeminiPrompt(context) {
   ].join('\n');
 }
 
-export async function inferArchetypeWithGemini(context, options = {}) {
+async function callGeminiAPI(payload, options = {}) {
   const apiKey = String(import.meta.env.VITE_GEMINI_API_KEY || '').trim();
   if (!apiKey) {
     throw new Error('Falta configurar VITE_GEMINI_API_KEY');
   }
 
   const model = normalizeModelName(import.meta.env.VITE_GEMINI_MODEL);
-  const prompt = buildGeminiPrompt(context);
-
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-  const payload = {
-    contents: [
-      {
-        role: 'user',
-        parts: [{ text: prompt }],
-      },
-    ],
-    generationConfig: {
-      temperature: 0.35,
-      maxOutputTokens: 512,
-      // Gemini 2.5 usa thinking por defecto; eso puede consumir el presupuesto
-      // de salida y truncar el JSON. Lo desactivamos para respuestas estructuradas.
-      thinkingConfig: {
-        thinkingBudget: 0,
-      },
-    },
-  };
 
   const MAX_429_DELAY_MS = 30_000;
   let rateRetryUsed = false;
@@ -301,6 +282,31 @@ export async function inferArchetypeWithGemini(context, options = {}) {
 
     throw new Error(`Gemini HTTP ${res.status}${errorText ? `: ${errorText}` : ''}`);
   }
+
+  return data;
+}
+
+export async function inferArchetypeWithGemini(context, options = {}) {
+  const prompt = buildGeminiPrompt(context);
+
+  const payload = {
+    contents: [
+      {
+        role: 'user',
+        parts: [{ text: prompt }],
+      },
+    ],
+    generationConfig: {
+      temperature: 0.35,
+      maxOutputTokens: 512,
+      thinkingConfig: {
+        thinkingBudget: 0,
+      },
+    },
+  };
+
+  const data = await callGeminiAPI(payload, options);
+
   const text =
     data?.candidates?.[0]?.content?.parts
       ?.map((p) => p?.text)
@@ -336,6 +342,28 @@ export async function inferArchetypeWithGemini(context, options = {}) {
     confianza,
     raw: json,
   };
+}
+
+export async function getChatResponse(messages, options = {}) {
+  const payload = {
+    contents: messages,
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 1024,
+    },
+    systemInstruction: {
+      parts: [{
+        text: "Eres 'mAIles', el asistente robot inteligente de AIBanks. Tu propósito es ayudar a los usuarios con la gamificación de pronósticos deportivos, explicar cómo funcionan los puntos y premios, y ser amigable y motivador. Responde de forma concisa y usa emojis relacionados con deportes o tecnología. Si te preguntan por predicciones, recuerda que son pronósticos deportivos para ganar puntos."
+      }]
+    }
+  };
+
+  const data = await callGeminiAPI(payload, options);
+
+  return data?.candidates?.[0]?.content?.parts
+    ?.map((p) => p?.text)
+    .filter(Boolean)
+    .join('\n') || 'Lo siento, no pude procesar tu solicitud.';
 }
 
 export function getPrizeLibrary() {
