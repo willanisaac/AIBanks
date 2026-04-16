@@ -263,6 +263,7 @@ const es = {
       successTitle: '¡Código aplicado! 🎉',
       successDesc: '+{{points}} mAIles fueron añadidos a tu cuenta. ¡Tu amigo también recibió su recompensa!',
       close: 'Cerrar',
+      enterAnotherCode: 'Ingresar otro código',
       errorAlreadyUsed: 'Ya usaste un código de referido anteriormente.',
       errorOwnCode: 'No puedes usar tu propio código de referido.',
       errorNotFound: 'Código no encontrado. Verifica e intenta de nuevo.',
@@ -489,6 +490,18 @@ const es = {
       step2: 'Cambia entre Desafíos (para ganar mAIles), Pronósticos (ver tus jugadas) y En Vivo (resultados reales).',
       step3: '¡No olvides reclamar tu bono diario! Te otorgamos 50 mAIles gratis cada día para que no dejes de jugar.',
       step4: 'Estos son los partidos destacados. Haz clic para elegir quién ganará y multiplica tus mAIles con nuestra IA.',
+    },
+    rewards: {
+      step1: 'Aquí verás tu balance total de mAIles disponibles para canjear en esta sección.',
+      step2: 'Accede al Ranking Global para comparar tu nivel, racha y puntos con otros usuarios de AIBank.',
+      step3: 'Explora nuestro catálogo de premios. Nuestro AI-Agent también puede recomendarte opciones basadas en tu estilo financiero.',
+    },
+    profile: {
+      step1: 'Este es tu saldo total. Las recompensas, transferencias y misiones sumarán puntos directamente a este balance.',
+      step2: 'Comprueba tu arquetipo financiero (determina qué tipo de beneficios se te recomiendan) y tus rachas o logros diarios.',
+      step3: '¡Comparte tu código con amigos o ingresa el de ellos! Ambos ganarán puntos inmediatamente listos para canjear.',
+      step4: 'El historial te mostrará todas tus predicciones completadas a lo largo de la temporada.',
+      step5: 'Finalmente, desde aquí abajo puedes personalizar el tema visual, gestionar el idioma o cerrar tu sesión.',
     },
   },
 

@@ -50,7 +50,55 @@ function useTourSteps() {
     }
   ], [t]);
 
-  return { GLOBAL_STEPS, SEASON_STEPS };
+  const REWARDS_STEPS = useMemo(() => [
+    {
+      target: '.tour-step-rewards-balance',
+      content: t('tour.rewards.step1'),
+      disableBeacons: true,
+      placement: 'bottom',
+    },
+    {
+      target: '.tour-step-rewards-ranking',
+      content: t('tour.rewards.step2'),
+      placement: 'bottom',
+    },
+    {
+      target: '.tour-step-rewards-catalog',
+      content: t('tour.rewards.step3'),
+      placement: 'top',
+    }
+  ], [t]);
+
+  const PROFILE_STEPS = useMemo(() => [
+    {
+      target: '.tour-step-profile-pts',
+      content: t('tour.profile.step1'),
+      disableBeacons: true,
+      placement: 'bottom',
+    },
+    {
+      target: '.tour-step-profile-stats',
+      content: t('tour.profile.step2'),
+      placement: 'bottom',
+    },
+    {
+      target: '.tour-step-profile-referral',
+      content: t('tour.profile.step3'),
+      placement: 'top',
+    },
+    {
+      target: '.tour-step-profile-history',
+      content: t('tour.profile.step4'),
+      placement: 'top',
+    },
+    {
+      target: '.tour-step-profile-settings',
+      content: t('tour.profile.step5'),
+      placement: 'top',
+    }
+  ], [t]);
+
+  return { GLOBAL_STEPS, SEASON_STEPS, REWARDS_STEPS, PROFILE_STEPS };
 }
 
 export function TourProvider({ children }) {
@@ -58,11 +106,16 @@ export function TourProvider({ children }) {
   const [tourKey, setTourKey] = useState(0);
   const [stepIndex, setStepIndex] = useState(0);
   const [activeFlow, setActiveFlow] = useState('global'); // 'global' | 'season'
-  const { GLOBAL_STEPS, SEASON_STEPS } = useTourSteps();
+  const { GLOBAL_STEPS, SEASON_STEPS, REWARDS_STEPS, PROFILE_STEPS } = useTourSteps();
 
   const steps = useMemo(() => {
-    return activeFlow === 'season' ? SEASON_STEPS : GLOBAL_STEPS;
-  }, [activeFlow, GLOBAL_STEPS, SEASON_STEPS]);
+    switch (activeFlow) {
+      case 'season': return SEASON_STEPS;
+      case 'rewards': return REWARDS_STEPS;
+      case 'profile': return PROFILE_STEPS;
+      default: return GLOBAL_STEPS;
+    }
+  }, [activeFlow, GLOBAL_STEPS, SEASON_STEPS, REWARDS_STEPS, PROFILE_STEPS]);
 
   const handleJoyrideCallback = useCallback((data) => {
     const { status, type } = data;
@@ -72,13 +125,21 @@ export function TourProvider({ children }) {
     if (finishedStatuses.includes(status)) {
       console.log('[Tour] Finishing tour...');
       setRun(false);
-      const storageKey = activeFlow === 'season' ? 'hasSeenSeasonTour' : 'hasSeenGlobalTour';
+      const storageKey = 
+        activeFlow === 'season' ? 'hasSeenSeasonTour' : 
+        activeFlow === 'rewards' ? 'hasSeenRewardsTour' :
+        activeFlow === 'profile' ? 'hasSeenProfileTour' :
+        'hasSeenGlobalTour';
       localStorage.setItem(storageKey, 'true');
     }
   }, [run, activeFlow]);
 
   const startTour = useCallback((force = false, flow = 'global') => {
-    const storageKey = flow === 'season' ? 'hasSeenSeasonTour' : 'hasSeenGlobalTour';
+    const storageKey = 
+      flow === 'season' ? 'hasSeenSeasonTour' : 
+      flow === 'rewards' ? 'hasSeenRewardsTour' :
+      flow === 'profile' ? 'hasSeenProfileTour' :
+      'hasSeenGlobalTour';
     const hasSeen = localStorage.getItem(storageKey);
     console.log('[Tour] startTour call:', { force, hasSeen, flow });
     

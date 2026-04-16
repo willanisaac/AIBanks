@@ -19,8 +19,11 @@ export default function TopBar() {
   const { t } = useTranslation();
 
   const handleHelpClick = () => {
-    // Determine flow based on route
-    const flow = location.pathname === '/season' ? 'season' : 'global';
+    let flow = 'global';
+    if (location.pathname === '/season' || location.pathname === '/predictions') flow = 'season';
+    else if (location.pathname === '/rewards') flow = 'rewards';
+    else if (location.pathname === '/profile') flow = 'profile';
+
     startTour(true, flow);
   };
 

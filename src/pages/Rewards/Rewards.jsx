@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, Coin, Check, Gift, Star, CurrencyDollar, TShirt, FilmSlate, Buildings, Bank, Sparkle, SquaresFour, List, Trophy } from '@phosphor-icons/react';
+import { Crown, Coin, Check, Gift, Star, CurrencyDollar, TShirt, FilmSlate, Buildings, Bank, Sparkle, SquaresFour, List, Trophy, Question } from '@phosphor-icons/react';
 import FlipCard from '../../components/FlipCard/FlipCard';
 import RippleButton from '../../components/RippleButton/RippleButton';
 import FireworksBackground from '../../components/FireworksBackground/FireworksBackground';
@@ -12,6 +12,7 @@ import { useTier } from '../../hooks/useTier';
 import { useMAIis } from '../../hooks/useMAIis';
 import { inferArchetypeWithGemini, isGeminiConfigured } from '../../services/gemini';
 import { useTranslation } from '../../i18n';
+import { useTour } from '../../context/TourContextBase';
 import styles from './Rewards.module.css';
 
 const CATEGORIES = [
@@ -326,6 +327,7 @@ export default function Rewards() {
   const { theme } = useTheme();
   const { user } = useAuth();
   const tier = useTier();
+  const { startTour } = useTour();
 
   const [aiRecommendation, setAiRecommendation] = useState(readAiRecommendation);
 
@@ -632,7 +634,7 @@ export default function Rewards() {
 
       {/* Balance Card */}
       <motion.div
-        className={styles.balance}
+        className={`${styles.balance} tour-step-rewards-balance`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
@@ -660,6 +662,7 @@ export default function Rewards() {
         onClick={() => setShowLeaderboard(true)}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
+        className="tour-step-rewards-ranking"
         style={{
           margin: '0 0 20px 0',
           background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(167, 139, 250, 0.15) 100%)',
@@ -697,7 +700,7 @@ export default function Rewards() {
         transition={{ delay: 0.1 }}
       >
         <motion.div
-          className={styles.aiCard}
+          className={`${styles.aiCard} tour-step-rewards-catalog`}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}

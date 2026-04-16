@@ -1,4 +1,5 @@
 import { Joyride } from 'react-joyride';
+import { useLocation } from 'react-router-dom';
 import { useTour } from '../../context/TourContextBase';
 import { useTheme } from '../../context/ThemeContextBase';
 import { useTranslation } from '../../i18n';
@@ -7,10 +8,24 @@ export default function JoyrideManager() {
   const { run, tourKey, steps, handleJoyrideCallback } = useTour();
   const { theme } = useTheme();
   const { t } = useTranslation();
+  const location = useLocation();
 
   const primaryColor = theme === 'dark' ? '#00e676' : '#2563eb';
 
-  if (!run) return null;
+  // Solo mostrar el tour si estamos en la ruta correcta según los steps
+  // (Identificamos por heurística si algún target está en la pantalla)
+  const isGlobalTour = steps.some(s => s.target.includes('tour-step-banco'));
+  const isSeasonTour = steps.some(s => s.target.includes('tour-step-balance'));
+  const isRewardsTour = steps.some(s => s.target.includes('tour-step-rewards-balance'));
+  const isProfileTour = steps.some(s => s.target.includes('tour-step-profile-pts'));
+
+  const isValidRouteForTour = 
+    (isGlobalTour && location.pathname === '/') || 
+    (isSeasonTour && (location.pathname === '/season' || location.pathname === '/predictions')) ||
+    (isRewardsTour && location.pathname === '/rewards') ||
+    (isProfileTour && location.pathname === '/profile');
+
+  if (!run || !isValidRouteForTour) return null;
 
   return (
     <Joyride
@@ -18,10 +33,10 @@ export default function JoyrideManager() {
       steps={steps}
       run={run}
       continuous
-      disableBeacons={true}
       showProgress
       showSkipButton
       scrollToFirstStep
+      scrollOffset={200}
       disableScrolling={false}
       callback={handleJoyrideCallback}
       locale={{
@@ -37,7 +52,7 @@ export default function JoyrideManager() {
           textColor: theme === 'dark' ? '#f8fafc' : '#1e293b',
           backgroundColor: theme === 'dark' ? '#1e1b4b' : '#ffffff',
           arrowColor: theme === 'dark' ? '#1e1b4b' : '#ffffff',
-          zIndex: 10000,
+          zIndex: 5000,
         },
         tooltip: {
           borderRadius: '16px',

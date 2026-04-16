@@ -248,6 +248,7 @@ const en = {
       successTitle: 'Code applied! 🎉',
       successDesc: '+{{points}} mAIles added to your account. Your friend was rewarded too!',
       close: 'Close',
+      enterAnotherCode: 'Enter another code',
       errorAlreadyUsed: 'You have already used a referral code.',
       errorOwnCode: 'You cannot use your own referral code.',
       errorNotFound: 'Code not found. Check and try again.',
@@ -472,6 +473,18 @@ const en = {
       step2: 'Switch between Challenges (to earn mAIles), Predictions (see your plays), and Live (real results).',
       step3: "Don't forget to claim your daily bonus! We give you 50 free mAIles every day to keep you playing.",
       step4: 'These are the featured matches. Click to choose who will win and multiply your mAIles with our AI.',
+    },
+    rewards: {
+      step1: 'Here you can see your total balance of mAIles available to redeem in this section.',
+      step2: 'Access the Global Ranking to compare your level, streak, and points with other AIBank users.',
+      step3: 'Explore our rewards catalog. Our AI-Agent can also recommend options based on your financial style.',
+    },
+    profile: {
+      step1: 'This is your total balance. Rewards, transfers, and missions will add points directly to this balance.',
+      step2: 'Check your financial archetype (determines what type of benefits are recommended to you) and your daily streaks or achievements.',
+      step3: "Share your code with friends or enter theirs! Both of you will immediately earn points ready to redeem.",
+      step4: 'The history tab will show you all your completed predictions throughout the season.',
+      step5: 'Finally, from down here you can customize the visual theme, manage language settings, or sign out.',
     },
   },
 

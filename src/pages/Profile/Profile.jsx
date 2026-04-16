@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
+import Confetti from 'react-confetti';
 import { useNavigate } from 'react-router-dom';
 import {
   SignOut,
@@ -20,6 +21,7 @@ import {
   Copy,
   Gift,
   UsersThree,
+  Question,
 } from '@phosphor-icons/react';
 import AnimatedCounter from '../../components/AnimatedCounter/AnimatedCounter';
 import FlipCard from '../../components/FlipCard/FlipCard';
@@ -32,6 +34,7 @@ import { useTier } from '../../hooks/useTier';
 import { useMAIis } from '../../hooks/useMAIis';
 import { useTranslation } from '../../i18n';
 import { applyReferralCode } from '../../services/referral';
+import { useTour } from '../../context/TourContextBase';
 import styles from './Profile.module.css';
 
 const staggerContainer = {
@@ -51,6 +54,7 @@ const LANGUAGE_OPTIONS = [
 export default function Profile() {
   const navigate = useNavigate();
   const { user, logout, refreshProfile } = useAuth();
+  const { startTour } = useTour();
   const { theme, toggleTheme } = useTheme();
   const { matches } = useWorldCupMatches();
   const tier = useTier();
@@ -107,11 +111,22 @@ export default function Profile() {
   };
 
   const handleApplyReferral = async () => {
-    if (!referralInput.trim() || !user?.id || referralStatus === 'loading') return;
+    const inputClean = referralInput.trim().toUpperCase();
+    if (!inputClean || !user?.id || referralStatus === 'loading') return;
     setReferralStatus('loading');
     setReferralMsg('');
+
+    // MODO PRUEBA: Permite ingresar el código "AIBANKS" infinitas veces para sumar puntos localmente
+    if (inputClean === 'AIBANKS') {
+      setTimeout(() => {
+        addBankMAIis(100);
+        setReferralStatus('success');
+      }, 700);
+      return;
+    }
+
     try {
-      await applyReferralCode(referralInput.trim(), user.id);
+      await applyReferralCode(inputClean, user.id);
       await refreshProfile(); // Esto trae los +100 puntos desde Supabase directo
       setReferralStatus('success');
     } catch (err) {
@@ -127,12 +142,7 @@ export default function Profile() {
     }
   };
 
-  const openReferralModal = () => {
-    setReferralInput('');
-    setReferralStatus('idle');
-    setReferralMsg('');
-    setShowReferralModal(true);
-  };
+
 
   return (
     <div className={styles.page}>
@@ -196,7 +206,7 @@ export default function Profile() {
               {tier}
             </motion.span>
           </div>
-          <div className={styles.pointsBig}>
+          <div className={`${styles.pointsBig} tour-step-profile-pts`}>
             <Coin size={24} weight="bold" />
             <AnimatedCounter
               value={currentMAIis.toLocaleString()}
@@ -210,7 +220,7 @@ export default function Profile() {
       {/* Referral Code Card */}
       {user?.referral_code && (
         <motion.section
-          className={styles.section}
+          className={`${styles.section} tour-step-profile-referral`}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.12 }}
@@ -239,10 +249,80 @@ export default function Profile() {
                 <span>{copied ? t('profile.referral.copied') : t('profile.referral.copyBtn')}</span>
               </motion.button>
             </div>
-            {user?.referred_by && (
-              <div className={styles.referralUsedBadge}>
-                <Check size={11} weight="bold" />
-                <span>{t('profile.referral.usedBadge')}: {user.referred_by}</span>
+            {referralStatus === 'success' ? (
+              <>
+                <Confetti
+                  width={window.innerWidth}
+                  height={window.innerHeight}
+                  recycle={false}
+                  numberOfPieces={400}
+                  gravity={0.12}
+                  style={{ position: 'fixed', top: 0, left: 0, zIndex: 99999, pointerEvents: 'none' }}
+                />
+                <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                style={{ marginTop: '16px', padding: '16px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(34, 197, 94, 0.2)' }}
+              >
+                <span style={{ fontSize: '2rem' }}>🎉</span>
+                <p style={{ color: '#22c55e', fontWeight: 'bold', margin: '8px 0 4px' }}>{t('profile.referral.successTitle')}</p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '14px' }}>{t('profile.referral.successDesc', { points: 100 })}</p>
+                <motion.button
+                  onClick={() => {
+                    setReferralStatus('idle');
+                    setReferralInput('');
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{ background: 'var(--gold-primary)', color: 'var(--bg-primary)', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '0.85rem' }}
+                >
+                  {t('profile.referral.enterAnotherCode') || 'Ingresar otro código'}
+                </motion.button>
+              </motion.div>
+              </>
+            ) : (
+              <div style={{ marginTop: '16px', borderTop: '1px solid rgba(255,215,0,0.1)', paddingTop: '16px' }}>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                  {t('profile.referral.modalSubtitle')}
+                </p>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    className={`${styles.referralInput} ${referralStatus === 'error' ? styles.referralInputError : ''}`}
+                    type="text"
+                    placeholder={t('profile.referral.inputPlaceholder')}
+                    value={referralInput}
+                    onChange={(e) => {
+                      setReferralInput(e.target.value.toUpperCase());
+                      if (referralStatus === 'error') setReferralStatus('idle');
+                    }}
+                    maxLength={8}
+                    disabled={referralStatus === 'loading'}
+                    autoComplete="off"
+                    autoCapitalize="characters"
+                    style={{ flex: 1, padding: '12px 14px', fontSize: '0.95rem' }}
+                  />
+                  <motion.button
+                    className={styles.referralApplyBtn}
+                    onClick={handleApplyReferral}
+                    disabled={!referralInput.trim() || referralStatus === 'loading'}
+                    whileTap={{ scale: 0.97 }}
+                    style={{ padding: '0 16px', width: 'auto', borderRadius: '12px' }}
+                  >
+                    {referralStatus === 'loading' ? '⏳' : t('profile.referral.applyBtn')}
+                  </motion.button>
+                </div>
+                <AnimatePresence>
+                  {referralStatus === 'error' && referralMsg && (
+                    <motion.p
+                      className={styles.referralError}
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      style={{ marginTop: '12px', fontSize: '0.75rem', color: '#f87171' }}
+                    >
+                      ⚠️ {referralMsg}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
             )}
           </div>
@@ -341,7 +421,7 @@ export default function Profile() {
       <section className={styles.section}>
         <h3 className={styles.sectionTitle}>{t('profile.archetype')}</h3>
         <motion.div
-          className={styles.archetypeCard}
+          className={`${styles.archetypeCard} tour-step-profile-stats`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -366,7 +446,7 @@ export default function Profile() {
       <section className={styles.section}>
         <h3 className={styles.sectionTitle}>{t('profile.predictionHistory')}</h3>
         <motion.div
-          className={styles.historyList}
+          className={`${styles.historyList} tour-step-profile-history`}
           variants={staggerContainer}
           initial="hidden"
           animate="show"
@@ -396,7 +476,7 @@ export default function Profile() {
       </section>
 
       {/* Menu Items */}
-      <section className={styles.section}>
+      <section className={`${styles.section} tour-step-profile-settings`}>
         <motion.div
           className={styles.menuList}
           variants={staggerContainer}
@@ -415,12 +495,6 @@ export default function Profile() {
               label: t('profile.language'),
               value: `${currentLangOption.flag} ${t(`languageSelector.${language}`)}`,
               action: () => setShowLanguageModal(true),
-            },
-            {
-              icon: <Gift size={20} weight="bold" />,
-              label: user?.referred_by ? t('profile.referral.hasUsed') : t('profile.referral.enterCode'),
-              value: user?.referred_by ? `✓ ${user.referred_by}` : undefined,
-              action: openReferralModal,
             },
             { icon: <Info size={20} weight="bold" />, label: t('profile.about'), action: () => setShowAboutModal(true) },
             {
@@ -585,141 +659,6 @@ export default function Profile() {
                     <div className={styles.infoDesc}>{t('profile.aboutModal.contactDesc')}</div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {/* Referral Code Modal */}
-      <AnimatePresence>
-        {showReferralModal && (
-          <motion.div
-            className={styles.modalOverlay}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => referralStatus !== 'loading' && setShowReferralModal(false)}
-          >
-            <motion.div
-              className={styles.modalContent}
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', stiffness: 340, damping: 32 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className={styles.modalHeader}>
-                <div className={styles.modalHandle} />
-                <div className={styles.modalHeaderRow}>
-                  <Gift size={22} weight="bold" style={{ color: 'var(--gold-primary)' }} />
-                  <h3 className={styles.modalTitle}>{t('profile.referral.modalTitle')}</h3>
-                  <motion.button
-                    className={styles.modalClose}
-                    onClick={() => setShowReferralModal(false)}
-                    whileTap={{ scale: 0.85 }}
-                    disabled={referralStatus === 'loading'}
-                  >
-                    <X size={18} weight="bold" />
-                  </motion.button>
-                </div>
-              </div>
-
-              <div className={styles.modalBody}>
-                {referralStatus === 'success' ? (
-                  /* ── Estado Éxito ── */
-                  <motion.div
-                    className={styles.referralSuccess}
-                    initial={{ opacity: 0, scale: 0.92 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                  >
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 14, delay: 0.1 }}
-                      style={{ fontSize: '3rem' }}
-                    >
-                      🎉
-                    </motion.div>
-                    <h4 className={styles.referralSuccessTitle}>{t('profile.referral.successTitle')}</h4>
-                    <p className={styles.referralSuccessDesc}>
-                      {t('profile.referral.successDesc', { points: 100 })}
-                    </p>
-                    <motion.button
-                      className={styles.referralApplyBtn}
-                      onClick={() => setShowReferralModal(false)}
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      {t('profile.referral.close')}
-                    </motion.button>
-                  </motion.div>
-                ) : (
-                  /* ── Estado Normal / Error ── */
-                  <>
-                    <p className={styles.langSubtitle}>{t('profile.referral.modalSubtitle')}</p>
-
-                    {/* Rewards info */}
-                    <div className={styles.referralRewardsRow}>
-                      <div className={styles.referralRewardItem}>
-                        <span className={styles.referralRewardPts}>+100</span>
-                        <span className={styles.referralRewardLabel}>{t('profile.referral.rewardGiver')}</span>
-                      </div>
-                      <div className={styles.referralRewardDivider} />
-                      <div className={styles.referralRewardItem}>
-                        <span className={styles.referralRewardPts}>+280</span>
-                        <span className={styles.referralRewardLabel}>{t('profile.referral.rewardForFriend')}</span>
-                      </div>
-                    </div>
-
-                    {/* Input */}
-                    <input
-                      className={`${styles.referralInput} ${referralStatus === 'error' ? styles.referralInputError : ''}`}
-                      type="text"
-                      placeholder={t('profile.referral.inputPlaceholder')}
-                      value={referralInput}
-                      onChange={(e) => {
-                        setReferralInput(e.target.value.toUpperCase());
-                        if (referralStatus === 'error') setReferralStatus('idle');
-                      }}
-                      maxLength={8}
-                      disabled={referralStatus === 'loading' || !!user?.referred_by}
-                      autoComplete="off"
-                      autoCapitalize="characters"
-                    />
-
-                    {/* Error message */}
-                    <AnimatePresence>
-                      {referralStatus === 'error' && referralMsg && (
-                        <motion.p
-                          className={styles.referralError}
-                          initial={{ opacity: 0, y: -6 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                        >
-                          ⚠️ {referralMsg}
-                        </motion.p>
-                      )}
-                    </AnimatePresence>
-
-                    {/* Apply button */}
-                    <motion.button
-                      className={styles.referralApplyBtn}
-                      onClick={handleApplyReferral}
-                      disabled={!referralInput.trim() || referralStatus === 'loading' || !!user?.referred_by}
-                      whileTap={!user?.referred_by ? { scale: 0.97 } : {}}
-                    >
-                      {referralStatus === 'loading'
-                        ? t('profile.referral.applying')
-                        : t('profile.referral.applyBtn')}
-                    </motion.button>
-
-                    {user?.referred_by && (
-                      <p className={styles.referralAlreadyUsedNote}>
-                        ✓ {t('profile.referral.errorAlreadyUsed')}
-                      </p>
-                    )}
-                  </>
-                )}
               </div>
             </motion.div>
           </motion.div>
