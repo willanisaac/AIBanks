@@ -37,10 +37,15 @@ export function useMAIis() {
 
   // Calcular mAIles ganados en predicciones
   const earnedPredictionMAIis = Object.entries(predictions).reduce((acc, [matchId, predData]) => {
+    // Si la predicción (nuevo formato) guarda los puntos internamente, úsalos enseguida sin depender de la red/API.
+    if (predData !== null && typeof predData === 'object' && 'points' in predData) {
+      return acc + (predData.points || 0);
+    }
+    
+    // Fallback de retrocompatibilidad para predicciones viejas (strings de 'home'/'away')
     const match = allMatches.find((m) => String(m.id) === String(matchId));
     if (!match) return acc;
-    const pts = typeof predData === 'object' ? predData.points : (match.points || 0);
-    return acc + pts;
+    return acc + (match.points || 0);
   }, 0);
 
   // Calcular mAIis gastados
